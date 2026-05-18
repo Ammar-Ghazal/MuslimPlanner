@@ -2,45 +2,25 @@ import SwiftUI
 
 struct PrayerAnchorRow: View {
     let prayer: PrayerTime
-    let onAdd: () -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 6) {
             Image(systemName: prayer.icon)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 28, height: 28)
-                .background(Circle().fill(prayerColor))
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(prayerColor)
 
-            VStack(alignment: .leading, spacing: 1) {
-                Text(prayer.name)
-                    .font(.subheadline.bold())
-                    .foregroundStyle(.primary)
-                Text(prayer.time.formatted(.dateTime.hour().minute()))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
+            Text(prayer.name)
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(prayerColor)
 
-            Spacer()
+            Text(prayer.time.formatted(.dateTime.hour().minute()))
+                .font(.system(size: 10))
+                .foregroundStyle(prayerColor.opacity(0.8))
 
-            Button(action: onAdd) {
-                Image(systemName: "plus.circle.fill")
-                    .font(.title3)
-                    .foregroundStyle(prayerColor)
-            }
-            .buttonStyle(.plain)
+            Rectangle()
+                .fill(prayerColor.opacity(0.4))
+                .frame(height: 1)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(prayerColor.opacity(0.08))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(prayerColor.opacity(0.25), lineWidth: 1)
-                )
-        )
-        .padding(.trailing, 12)
     }
 
     private var prayerColor: Color {

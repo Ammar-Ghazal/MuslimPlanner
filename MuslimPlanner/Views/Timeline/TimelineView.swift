@@ -5,6 +5,7 @@ import SwiftData
 private let kHourHeight: CGFloat = 64
 private let kRulerWidth: CGFloat = 48
 private let kTaskInset: CGFloat  = 4
+private let kRightPad: CGFloat   = 16
 
 struct TimelineView: View {
     @ObservedObject var viewModel: DayPlanViewModel
@@ -13,11 +14,14 @@ struct TimelineView: View {
     @Query private var allTasks: [PlanTask]
     @Environment(\.modelContext) private var ctx
 
-    @State private var showEditor = false
+    @State private var showEditor  = false
     @State private var editingTask: PlanTask?
-    @State private var preselectedBlock = ""
 
-    // MARK: Derived data
+    // Drag state — only one task dragged at a time
+    @State private var draggingID: PersistentIdentifier? = nil
+    @State private var dragOffset: CGFloat = 0
+
+    // MARK: - Derived
 
     private var dayStart: Date {
         Calendar.current.startOfDay(for: viewModel.selectedDate)
@@ -27,11 +31,8 @@ struct TimelineView: View {
         allTasks.filter { Calendar.current.isDate($0.date, inSameDayAs: viewModel.selectedDate) }
     }
 
-    private var timedTasks: [PlanTask]   { dayTasks.filter { $0.startTime != nil } }
-    private var untimedTasks: [PlanTask] { dayTasks.filter { $0.startTime == nil } }
-
-    private func untimedInBlock(_ blockName: String) -> [PlanTask] {
-        untimedTasks.filter { $0.prayerBlock == blockName }
+    private var timedTasks: [PlanTask] {
+        dayTasks.filter { $0.startTime != nil }
     }
 
     private func yFor(_ date: Date) -> CGFloat {
@@ -39,17 +40,20 @@ struct TimelineView: View {
         return max(0, CGFloat(seconds / 3600) * kHourHeight)
     }
 
-    private var canvasHeight: CGFloat {
-        var base: CGFloat = 24 * kHourHeight
-        for prayer in viewModel.prayerTimes {
-            let taskCount = CGFloat(untimedInBlock(prayer.blockName).count)
-            let bottom = yFor(prayer.time) + 44 + taskCount * 48
-            base = max(base, bottom + 80)
-        }
-        return base
+    private func taskHeight(_ task: PlanTask) -> CGFloat {
+        let mins = CGFloat(task.durationMinutes ?? 30)
+        return max(40, mins / 60 * kHourHeight)
     }
 
-    // MARK: Body
+    private var canvasHeight: CGFloat {
+        let bottom = timedTasks.compactMap { t -> CGFloat? in
+            guard let s = t.startTime else { return nil }
+            return yFor(s) + taskHeight(t)
+        }.max() ?? 0
+        return max(24 * kHourHeight, bottom + 120)
+    }
+
+    // MARK: - Body
 
     var body: some View {
         NavigationStack {
@@ -67,7 +71,13 @@ struct TimelineView: View {
                             hourGrid
                             currentTimeLine
                             prayerLayer
-                            timedTaskLayer
+                            // GeometryReader lets task cards stretch to full available width
+                            GeometryReader { geo in
+                                let taskW = geo.size.width - kRulerWidth - kTaskInset - kRightPad
+                                ForEach(timedTasks) { task in
+                                    taskCard(task, width: taskW)
+                                }
+                            }
                             Color.clear.frame(width: 1, height: canvasHeight)
                         }
                         .frame(maxWidth: .infinity, minHeight: canvasHeight)
@@ -90,7 +100,6 @@ struct TimelineView: View {
             TaskEditorSheet(
                 task: editingTask,
                 date: viewModel.selectedDate,
-                prayerBlock: preselectedBlock,
                 prayerTimes: viewModel.prayerTimes
             )
             .onDisappear { editingTask = nil }
@@ -104,7 +113,7 @@ struct TimelineView: View {
 
     private var hourGrid: some View {
         VStack(spacing: 0) {
-            ForEach(0 ..< 25, id: \.self) { hour in
+            ForEach(0..<25, id: \.self) { hour in
                 HStack(spacing: 6) {
                     Text(hourLabel(hour % 24))
                         .font(.system(size: 10, weight: .regular, design: .monospaced))
@@ -138,46 +147,63 @@ struct TimelineView: View {
         }
     }
 
-    // MARK: - Prayer layer
+    // MARK: - Prayer layer (fixed markers, no tasks)
 
     private var prayerLayer: some View {
         ForEach(viewModel.prayerTimes) { prayer in
-            VStack(alignment: .leading, spacing: 0) {
-                PrayerAnchorRow(prayer: prayer) {
-                    preselectedBlock = prayer.blockName
-                    editingTask = nil
-                    showEditor = true
-                }
-                ForEach(untimedInBlock(prayer.blockName)) { task in
-                    UntimedTaskRow(task: task) {
-                        editingTask = task
-                        preselectedBlock = task.prayerBlock
-                        showEditor = true
-                    }
-                }
-            }
-            .padding(.leading, kRulerWidth + kTaskInset)
-            .offset(y: yFor(prayer.time))
+            PrayerAnchorRow(prayer: prayer)
+                .padding(.leading, kRulerWidth + kTaskInset)
+                .padding(.trailing, kRightPad)
+                .offset(y: yFor(prayer.time) - 9)
         }
     }
 
-    // MARK: - Timed task layer
+    // MARK: - Task cards with drag
 
-    private var timedTaskLayer: some View {
-        ForEach(timedTasks) { task in
-            TimedTaskCard(task: task) {
-                editingTask = task
-                preselectedBlock = task.prayerBlock
-                showEditor = true
-            }
-            .frame(width: 200, height: taskHeight(task))
-            .offset(x: kRulerWidth + kTaskInset, y: yFor(task.startTime!))
+    @ViewBuilder
+    private func taskCard(_ task: PlanTask, width: CGFloat) -> some View {
+        let isDragging = draggingID == task.persistentModelID
+        let yBase = yFor(task.startTime!)
+        let yPos  = yBase + (isDragging ? dragOffset : 0)
+
+        TimedTaskCard(task: task) {
+            editingTask = task
+            showEditor  = true
         }
+        .frame(width: max(60, width), height: taskHeight(task))
+        .offset(x: kRulerWidth + kTaskInset, y: yPos)
+        .zIndex(isDragging ? 1 : 0)
+        .shadow(
+            color: .black.opacity(isDragging ? 0.18 : 0),
+            radius: isDragging ? 10 : 0,
+            y: isDragging ? 4 : 0
+        )
+        .scaleEffect(isDragging ? 1.02 : 1.0, anchor: .center)
+        .animation(.interactiveSpring(response: 0.25), value: isDragging)
+        .gesture(
+            DragGesture(minimumDistance: 8, coordinateSpace: .global)
+                .onChanged { val in
+                    draggingID  = task.persistentModelID
+                    dragOffset  = val.translation.height
+                }
+                .onEnded { val in
+                    commitDrag(task: task, pixelOffset: val.translation.height)
+                    draggingID  = nil
+                    dragOffset  = 0
+                }
+        )
     }
 
-    private func taskHeight(_ task: PlanTask) -> CGFloat {
-        let mins = CGFloat(task.durationMinutes ?? 30)
-        return max(40, mins / 60 * kHourHeight)
+    private func commitDrag(task: PlanTask, pixelOffset: CGFloat) {
+        let secondsPerPixel = 3600.0 / Double(kHourHeight)
+        let delta = (Double(pixelOffset) * secondsPerPixel / 300).rounded() * 300
+        guard let current = task.startTime else { return }
+        var newStart = current.addingTimeInterval(delta)
+        let start = dayStart
+        let end   = start.addingTimeInterval(86399)
+        newStart = min(max(newStart, start), end)
+        task.startTime   = newStart
+        task.prayerBlock = viewModel.prayerBlock(containing: newStart)
     }
 
     // MARK: - Date header
@@ -185,11 +211,10 @@ struct TimelineView: View {
     private var dateHeader: some View {
         HStack {
             Button {
-                viewModel.selectedDate = Calendar.current.date(byAdding: .day, value: -1, to: viewModel.selectedDate)!
+                viewModel.selectedDate = Calendar.current.date(
+                    byAdding: .day, value: -1, to: viewModel.selectedDate)!
             } label: {
-                Image(systemName: "chevron.left")
-                    .font(.title3)
-                    .padding(8)
+                Image(systemName: "chevron.left").font(.title3).padding(8)
             }
 
             Spacer()
@@ -198,38 +223,33 @@ struct TimelineView: View {
                 Text(viewModel.selectedDate, format: .dateTime.weekday(.wide))
                     .font(.headline)
                 if let countdown = viewModel.countdownText() {
-                    Text(countdown)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    Text(countdown).font(.caption).foregroundStyle(.secondary)
                 }
                 if !viewModel.locationService.cityName.isEmpty {
                     Text(viewModel.locationService.cityName)
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
+                        .font(.caption2).foregroundStyle(.tertiary)
                 }
             }
 
             Spacer()
 
             Button {
-                viewModel.selectedDate = Calendar.current.date(byAdding: .day, value: 1, to: viewModel.selectedDate)!
+                viewModel.selectedDate = Calendar.current.date(
+                    byAdding: .day, value: 1, to: viewModel.selectedDate)!
             } label: {
-                Image(systemName: "chevron.right")
-                    .font(.title3)
-                    .padding(8)
+                Image(systemName: "chevron.right").font(.title3).padding(8)
             }
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
     }
 
-    // MARK: - Add FAB
+    // MARK: - FAB
 
     private var addButton: some View {
         Button {
-            preselectedBlock = viewModel.prayerBlock(containing: Date())
             editingTask = nil
-            showEditor = true
+            showEditor  = true
         } label: {
             Image(systemName: "plus")
                 .font(.title2.bold())
@@ -245,10 +265,8 @@ struct TimelineView: View {
 
     private func errorBanner(_ msg: String) -> some View {
         HStack {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .foregroundStyle(.orange)
-            Text(msg)
-                .font(.caption)
+            Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+            Text(msg).font(.caption)
             Spacer()
         }
         .padding(.horizontal, 16)
@@ -267,81 +285,59 @@ struct TimelineView: View {
     }
 }
 
-// MARK: - Untimed task row
-
-struct UntimedTaskRow: View {
-    @Bindable var task: PlanTask
-    let onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: 10) {
-                Button {
-                    task.isCompleted.toggle()
-                } label: {
-                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(task.isCompleted ? Color.green : Color.secondary)
-                }
-                .buttonStyle(.plain)
-
-                Text(task.title)
-                    .font(.subheadline)
-                    .strikethrough(task.isCompleted)
-                    .foregroundStyle(task.isCompleted ? .secondary : .primary)
-                    .lineLimit(1)
-
-                Spacer()
-
-                if let cat = task.category {
-                    Label(cat.name, systemImage: cat.symbolName)
-                        .font(.caption2)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Color(hex: cat.colorHex).opacity(0.15))
-                        .foregroundStyle(Color(hex: cat.colorHex))
-                        .clipShape(Capsule())
-                }
-            }
-            .padding(.horizontal, 10)
-            .frame(height: 44)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Timed task card
+// MARK: - Task card view
 
 struct TimedTaskCard: View {
     @Bindable var task: PlanTask
     let onTap: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
-            HStack(alignment: .top, spacing: 0) {
-                Rectangle()
-                    .fill(accentColor)
-                    .frame(width: 4)
+        HStack(alignment: .top, spacing: 0) {
+            Rectangle()
+                .fill(accentColor)
+                .frame(width: 4)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(task.title)
-                        .font(.caption.bold())
-                        .lineLimit(2)
-                    if let start = task.startTime {
-                        Text(start.formatted(.dateTime.hour().minute()))
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                    }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(task.title)
+                    .font(.caption.bold())
+                    .lineLimit(2)
+                    .foregroundStyle(.primary)
+
+                if let start = task.startTime {
+                    let dur    = Double((task.durationMinutes ?? 30) * 60)
+                    let end    = start.addingTimeInterval(dur)
+                    Text("\(start.formatted(.dateTime.hour().minute())) – \(end.formatted(.dateTime.hour().minute()))")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
                 }
-                .padding(6)
 
-                Spacer(minLength: 0)
+                if let cat = task.category {
+                    Label(cat.name, systemImage: cat.symbolName)
+                        .font(.caption2)
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 2)
+                        .background(Color(hex: cat.colorHex).opacity(0.15))
+                        .foregroundStyle(Color(hex: cat.colorHex))
+                        .clipShape(Capsule())
+                }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .background(accentColor.opacity(0.12))
-            .overlay(RoundedRectangle(cornerRadius: 6).stroke(accentColor.opacity(0.35), lineWidth: 1))
-            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .padding(6)
+
+            Spacer(minLength: 0)
+
+            // Drag handle
+            Image(systemName: "line.3.horizontal")
+                .font(.caption)
+                .foregroundStyle(.tertiary)
+                .padding(.trailing, 6)
+                .padding(.top, 6)
         }
-        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(accentColor.opacity(0.1))
+        .overlay(RoundedRectangle(cornerRadius: 6).stroke(accentColor.opacity(0.3), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .contentShape(Rectangle())
+        .onTapGesture { onTap() }
     }
 
     private var accentColor: Color {

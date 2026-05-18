@@ -2,23 +2,18 @@ import SwiftUI
 import SwiftData
 
 struct TaskEditorSheet: View {
-    // Pass nil for new task, an existing PlanTask to edit
     var task: PlanTask?
     let date: Date
-    let prayerBlock: String
     let prayerTimes: [PrayerTime]
 
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
 
-    @State private var title          = ""
-    @State private var hasStartTime   = false
-    @State private var startTime      = Date()
-    @State private var hasDuration    = false
-    @State private var durationMins   = 30
-    @State private var selectedBlock  = ""
+    @State private var title        = ""
+    @State private var startTime    = Date()
+    @State private var durationMins = 30
     @State private var selectedCat: Category?
-    @State private var isCompleted    = false
+    @State private var isCompleted  = false
 
     private var isEditing: Bool { task != nil }
 
@@ -27,27 +22,14 @@ struct TaskEditorSheet: View {
             Form {
                 Section {
                     TextField("Task title", text: $title)
-                        .font(.body)
                 }
 
-                Section("Time (optional)") {
-                    Toggle("Set start time", isOn: $hasStartTime.animation())
-                    if hasStartTime {
-                        DatePicker("Start time", selection: $startTime, displayedComponents: .hourAndMinute)
-                        Toggle("Set duration", isOn: $hasDuration.animation())
-                        if hasDuration {
-                            Stepper("\(durationMins) min", value: $durationMins, in: 5 ... 480, step: 5)
-                        }
-                    }
-                }
-
-                Section("Prayer block") {
-                    Picker("Block", selection: $selectedBlock) {
-                        ForEach(prayerTimes) { p in
-                            Text(p.name).tag(p.blockName)
-                        }
-                    }
-                    .pickerStyle(.segmented)
+                Section("Schedule") {
+                    DatePicker("Start time", selection: $startTime, displayedComponents: .hourAndMinute)
+                    Stepper("Duration: \(durationMins) min", value: $durationMins, in: 5...480, step: 5)
+                    let end = startTime.addingTimeInterval(Double(durationMins * 60))
+                    LabeledContent("Ends at", value: end.formatted(.dateTime.hour().minute()))
+                        .foregroundStyle(.secondary)
                 }
 
                 Section {
@@ -58,7 +40,6 @@ struct TaskEditorSheet: View {
                     Section {
                         Toggle("Completed", isOn: $isCompleted)
                     }
-
                     Section {
                         Button("Delete Task", role: .destructive) {
                             if let t = task { ctx.delete(t) }
@@ -82,28 +63,36 @@ struct TaskEditorSheet: View {
         }
     }
 
-    // MARK: - Populate from existing task
-
     private func populate() {
         if let t = task {
-            title         = t.title
-            hasStartTime  = t.startTime != nil
-            startTime     = t.startTime ?? Date()
-            hasDuration   = t.durationMinutes != nil
-            durationMins  = t.durationMinutes ?? 30
-            selectedBlock = t.prayerBlock
-            selectedCat   = t.category
-            isCompleted   = t.isCompleted
+            title        = t.title
+            startTime    = t.startTime ?? defaultStartTime()
+            durationMins = t.durationMinutes ?? 30
+            selectedCat  = t.category
+            isCompleted  = t.isCompleted
         } else {
-            selectedBlock = prayerBlock.isEmpty ? (prayerTimes.first?.blockName ?? "Fajr") : prayerBlock
-            let cal = Calendar.current
-            startTime = cal.date(bySettingHour: cal.component(.hour, from: Date()),
-                                 minute: cal.component(.minute, from: Date()),
-                                 second: 0, of: date) ?? date
+            startTime = defaultStartTime()
         }
     }
 
-    // MARK: - Save
+    private func defaultStartTime() -> Date {
+        let cal = Calendar.current
+        let now = Date()
+        return cal.date(
+            bySettingHour:   cal.component(.hour,   from: now),
+            minute:          cal.component(.minute, from: now),
+            second: 0,
+            of: date
+        ) ?? date
+    }
+
+    private func prayerBlock(for time: Date) -> String {
+        for (i, prayer) in prayerTimes.enumerated() {
+            let next = i + 1 < prayerTimes.count ? prayerTimes[i + 1].time : Date.distantFuture
+            if time >= prayer.time && time < next { return prayer.blockName }
+        }
+        return prayerTimes.first?.blockName ?? "Fajr"
+    }
 
     private func save() {
         let cleanTitle = title.trimmingCharacters(in: .whitespaces)
@@ -111,29 +100,31 @@ struct TaskEditorSheet: View {
 
         let cal = Calendar.current
         let base = cal.startOfDay(for: date)
-        let computedStart: Date? = hasStartTime ? cal.date(
+        let computedStart = cal.date(
             bySettingHour:   cal.component(.hour,   from: startTime),
             minute:          cal.component(.minute, from: startTime),
-            second: 0, of: base
-        ) : nil
+            second: 0,
+            of: base
+        ) ?? base
+
+        let block = prayerBlock(for: computedStart)
 
         if let t = task {
             t.title           = cleanTitle
-            t.prayerBlock     = selectedBlock
             t.startTime       = computedStart
-            t.durationMinutes = hasDuration ? durationMins : nil
+            t.durationMinutes = durationMins
+            t.prayerBlock     = block
             t.category        = selectedCat
             t.isCompleted     = isCompleted
         } else {
-            let newTask = PlanTask(
+            ctx.insert(PlanTask(
                 title:           cleanTitle,
                 date:            base,
-                prayerBlock:     selectedBlock,
+                prayerBlock:     block,
                 startTime:       computedStart,
-                durationMinutes: hasDuration ? durationMins : nil,
+                durationMinutes: durationMins,
                 category:        selectedCat
-            )
-            ctx.insert(newTask)
+            ))
         }
         dismiss()
     }
