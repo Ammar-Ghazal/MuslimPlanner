@@ -1,0 +1,466 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07055C708F225C0F3B4373CC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2CFF90C8950A503C7A5652 /* NotificationService.swift */; };
+		18D25DD4AB88420FE3C86749 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC42FD5DCEA1C85F097478F5 /* ContentView.swift */; };
+		39640412088E46C6F8AC0327 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED1C2FC2F1C141380E7E9D5 /* TimelineView.swift */; };
+		41D804868C5152897B0CC656 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D639B414425E39E624DADC0 /* AppSettings.swift */; };
+		4250701316059F408C11BC11 /* CategoryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97C2AC28C318C470153E830 /* CategoryPicker.swift */; };
+		4D239FD43DCAF60916AB8A90 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E4809910FF741EC4D57D4 /* Extensions.swift */; };
+		617C61381CAC49360E238120 /* PrayerTimeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1C64B5FFA5F3DFC2E756D0 /* PrayerTimeService.swift */; };
+		6821EFEA13024534303ABEA0 /* SwiftData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */; };
+		7F018A5174FB90A32BD285B9 /* DayPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094EDFC40186B1DA4379B5A8 /* DayPlanViewModel.swift */; };
+		82EF675C236AF1080C6EBA7E /* PlanTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067312DD0D64CFAC1EF551C4 /* PlanTask.swift */; };
+		880396B4A9CA57AB2FE7A86B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */; };
+		954801C9BD5EA85EAC65B20E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A82412766D38719C8E6F59 /* MainTabView.swift */; };
+		9DE9509DA201C52F9EF8587C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0C512871DD7A596F089F7 /* SettingsView.swift */; };
+		A4603E4A9D2237F77DC06EF2 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188A691526794C1A8A15160A /* Category.swift */; };
+		BC6FEACD5112624BCD1C1A98 /* CategoryManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */; };
+		C0C474E2384E1D24A7F5C8DE /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20664468F9BBD341BBE40F2E /* LocationService.swift */; };
+		C4EE921562296FA76AE3379E /* PrayerAnchorRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D3AF9382BE82978BE15F06 /* PrayerAnchorRow.swift */; };
+		CE8C0642210E908DDA16B4FF /* MuslimPlannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8387FC484D145B0A35CCD688 /* MuslimPlannerApp.swift */; };
+		E71E063E5EDFEF4C6DED0065 /* TaskEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF0203954274F94D249397F /* TaskEditorSheet.swift */; };
+		EE9624F03831B0C4CEEEA309 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49D2D45CE44D6DCC663D58A7 /* UserNotifications.framework */; };
+		F0B5BB8655CD786C37FE0BE9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4771C86F6F25821663DC3757 /* OnboardingView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		067312DD0D64CFAC1EF551C4 /* PlanTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTask.swift; sourceTree = "<group>"; };
+		094EDFC40186B1DA4379B5A8 /* DayPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPlanViewModel.swift; sourceTree = "<group>"; };
+		188A691526794C1A8A15160A /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		20664468F9BBD341BBE40F2E /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		2D2CFF90C8950A503C7A5652 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		32F0C512871DD7A596F089F7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		35A82412766D38719C8E6F59 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		3CF0203954274F94D249397F /* TaskEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditorSheet.swift; sourceTree = "<group>"; };
+		4771C86F6F25821663DC3757 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		49D2D45CE44D6DCC663D58A7 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		4D639B414425E39E624DADC0 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		8387FC484D145B0A35CCD688 /* MuslimPlannerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuslimPlannerApp.swift; sourceTree = "<group>"; };
+		9E1C64B5FFA5F3DFC2E756D0 /* PrayerTimeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerTimeService.swift; sourceTree = "<group>"; };
+		9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftData.framework; path = System/Library/Frameworks/SwiftData.framework; sourceTree = SDKROOT; };
+		A97C2AC28C318C470153E830 /* CategoryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPicker.swift; sourceTree = "<group>"; };
+		BC42FD5DCEA1C85F097478F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryManagerView.swift; sourceTree = "<group>"; };
+		D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		DD3E4809910FF741EC4D57D4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		E17B12A516D6C6A03AEC3749 /* MuslimPlanner.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MuslimPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F6D3AF9382BE82978BE15F06 /* PrayerAnchorRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerAnchorRow.swift; sourceTree = "<group>"; };
+		FED1C2FC2F1C141380E7E9D5 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F33CEB757BB1AC77F70F58A1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6821EFEA13024534303ABEA0 /* SwiftData.framework in Frameworks */,
+				880396B4A9CA57AB2FE7A86B /* CoreLocation.framework in Frameworks */,
+				EE9624F03831B0C4CEEEA309 /* UserNotifications.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		066E28E3D2C1653A898ED806 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				EEBF4A883A346EE58329DD22 /* Onboarding */,
+				65B6D1179026251474B6A99B /* Settings */,
+				2C476BEA785E69ECACA76700 /* TaskEditor */,
+				79D0BC5453673CFF4954B421 /* Timeline */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		2C476BEA785E69ECACA76700 /* TaskEditor */ = {
+			isa = PBXGroup;
+			children = (
+				A97C2AC28C318C470153E830 /* CategoryPicker.swift */,
+				3CF0203954274F94D249397F /* TaskEditorSheet.swift */,
+			);
+			path = TaskEditor;
+			sourceTree = "<group>";
+		};
+		2E888ADD4D02B7CF987BC218 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				DD3E4809910FF741EC4D57D4 /* Extensions.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		3233EE8A085A481CBBF90431 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E17B12A516D6C6A03AEC3749 /* MuslimPlanner.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		65B6D1179026251474B6A99B /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */,
+				32F0C512871DD7A596F089F7 /* SettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		66B47AFFAAD96481F4B5681B /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				094EDFC40186B1DA4379B5A8 /* DayPlanViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		687FDFE565800C4489E304D8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				4D639B414425E39E624DADC0 /* AppSettings.swift */,
+				188A691526794C1A8A15160A /* Category.swift */,
+				067312DD0D64CFAC1EF551C4 /* PlanTask.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		79D0BC5453673CFF4954B421 /* Timeline */ = {
+			isa = PBXGroup;
+			children = (
+				F6D3AF9382BE82978BE15F06 /* PrayerAnchorRow.swift */,
+				FED1C2FC2F1C141380E7E9D5 /* TimelineView.swift */,
+			);
+			path = Timeline;
+			sourceTree = "<group>";
+		};
+		9124B3D64A2B25F9C3DE503B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				20664468F9BBD341BBE40F2E /* LocationService.swift */,
+				2D2CFF90C8950A503C7A5652 /* NotificationService.swift */,
+				9E1C64B5FFA5F3DFC2E756D0 /* PrayerTimeService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		99DD5735C69A83312930F144 = {
+			isa = PBXGroup;
+			children = (
+				BF8CD359C11ADCE2759159A6 /* MuslimPlanner */,
+				A94451C3110C436697D6A0D1 /* Frameworks */,
+				3233EE8A085A481CBBF90431 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A94451C3110C436697D6A0D1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */,
+				9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */,
+				49D2D45CE44D6DCC663D58A7 /* UserNotifications.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BF8CD359C11ADCE2759159A6 /* MuslimPlanner */ = {
+			isa = PBXGroup;
+			children = (
+				BC42FD5DCEA1C85F097478F5 /* ContentView.swift */,
+				35A82412766D38719C8E6F59 /* MainTabView.swift */,
+				8387FC484D145B0A35CCD688 /* MuslimPlannerApp.swift */,
+				687FDFE565800C4489E304D8 /* Models */,
+				9124B3D64A2B25F9C3DE503B /* Services */,
+				2E888ADD4D02B7CF987BC218 /* Utilities */,
+				66B47AFFAAD96481F4B5681B /* ViewModels */,
+				066E28E3D2C1653A898ED806 /* Views */,
+			);
+			path = MuslimPlanner;
+			sourceTree = "<group>";
+		};
+		EEBF4A883A346EE58329DD22 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				4771C86F6F25821663DC3757 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1788DB3B82B2B758191A729E /* MuslimPlanner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0EC042C91D16C8EF320B69A5 /* Build configuration list for PBXNativeTarget "MuslimPlanner" */;
+			buildPhases = (
+				D221034B751E607A416E7A26 /* Sources */,
+				F33CEB757BB1AC77F70F58A1 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MuslimPlanner;
+			packageProductDependencies = (
+			);
+			productName = MuslimPlanner;
+			productReference = E17B12A516D6C6A03AEC3749 /* MuslimPlanner.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0A234F0649E5788D49D8DC9D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					1788DB3B82B2B758191A729E = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 37CB80AE3826CE5F1A63923A /* Build configuration list for PBXProject "MuslimPlanner" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 99DD5735C69A83312930F144;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1788DB3B82B2B758191A729E /* MuslimPlanner */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D221034B751E607A416E7A26 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				41D804868C5152897B0CC656 /* AppSettings.swift in Sources */,
+				A4603E4A9D2237F77DC06EF2 /* Category.swift in Sources */,
+				BC6FEACD5112624BCD1C1A98 /* CategoryManagerView.swift in Sources */,
+				4250701316059F408C11BC11 /* CategoryPicker.swift in Sources */,
+				18D25DD4AB88420FE3C86749 /* ContentView.swift in Sources */,
+				7F018A5174FB90A32BD285B9 /* DayPlanViewModel.swift in Sources */,
+				4D239FD43DCAF60916AB8A90 /* Extensions.swift in Sources */,
+				C0C474E2384E1D24A7F5C8DE /* LocationService.swift in Sources */,
+				954801C9BD5EA85EAC65B20E /* MainTabView.swift in Sources */,
+				CE8C0642210E908DDA16B4FF /* MuslimPlannerApp.swift in Sources */,
+				07055C708F225C0F3B4373CC /* NotificationService.swift in Sources */,
+				F0B5BB8655CD786C37FE0BE9 /* OnboardingView.swift in Sources */,
+				82EF675C236AF1080C6EBA7E /* PlanTask.swift in Sources */,
+				C4EE921562296FA76AE3379E /* PrayerAnchorRow.swift in Sources */,
+				617C61381CAC49360E238120 /* PrayerTimeService.swift in Sources */,
+				9DE9509DA201C52F9EF8587C /* SettingsView.swift in Sources */,
+				E71E063E5EDFEF4C6DED0065 /* TaskEditorSheet.swift in Sources */,
+				39640412088E46C6F8AC0327 /* TimelineView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		7DFA8B716015DDAA5CDCB0DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		C2D58DECD888B5D8AACEE1D6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = MuslimPlanner/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.muslimplanner.app;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		D809F62D37D56D2DB8E093F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		EBFC38A87E27368127645989 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = MuslimPlanner/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.muslimplanner.app;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0EC042C91D16C8EF320B69A5 /* Build configuration list for PBXNativeTarget "MuslimPlanner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EBFC38A87E27368127645989 /* Debug */,
+				C2D58DECD888B5D8AACEE1D6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		37CB80AE3826CE5F1A63923A /* Build configuration list for PBXProject "MuslimPlanner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D809F62D37D56D2DB8E093F8 /* Debug */,
+				7DFA8B716015DDAA5CDCB0DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0A234F0649E5788D49D8DC9D /* Project object */;
+}
