@@ -17,7 +17,7 @@ xcodebuild \
   CODE_SIGNING_REQUIRED=YES \
   build 2>&1 | grep -E "error:|warning:|\*\* BUILD"
 
-APP_PATH=$(find "$DERIVED_DATA" -path "*/Debug-maccatalyst/MuslimPlanner.app" | head -1)
+APP_PATH=$(find "$DERIVED_DATA" -path "*/Debug-maccatalyst/MuslimPlanner.app" -not -path "*/Index.noindex/*" | head -1)
 
 if [[ -z "$APP_PATH" ]]; then
   echo "Error: Could not find built app"

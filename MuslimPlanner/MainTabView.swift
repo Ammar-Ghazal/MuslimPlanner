@@ -16,6 +16,9 @@ struct MainTabView: View {
             .onChange(of: viewModel.selectedDate) {
                 Task { await viewModel.loadPrayerTimes(settings: settings) }
             }
+            .onChange(of: settings.calculationMethod) {
+                Task { await viewModel.loadPrayerTimes(settings: settings) }
+            }
     }
 
     @ViewBuilder
