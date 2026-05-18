@@ -317,13 +317,13 @@ struct TimedTaskCard: View {
                         .foregroundStyle(.secondary)
                 }
 
-                if let cat = task.category {
-                    Label(cat.name, systemImage: cat.symbolName)
+                if let template = task.taskType {
+                    Label(template.name, systemImage: template.symbolName)
                         .font(.caption2)
                         .padding(.horizontal, 5)
                         .padding(.vertical, 2)
-                        .background(Color(hex: cat.colorHex).opacity(0.15))
-                        .foregroundStyle(Color(hex: cat.colorHex))
+                        .background(Color(hex: template.colorHex).opacity(0.15))
+                        .foregroundStyle(Color(hex: template.colorHex))
                         .clipShape(Capsule())
                 }
             }
@@ -347,6 +347,6 @@ struct TimedTaskCard: View {
     }
 
     private var accentColor: Color {
-        Color(hex: task.category?.colorHex ?? "007AFF")
+        Color(hex: task.taskType?.colorHex ?? "007AFF")
     }
 }

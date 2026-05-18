@@ -3,8 +3,8 @@ import SwiftData
 
 struct TaskEditorSheet: View {
     var task: PlanTask?
-    var prefill: TaskTemplate? = nil   // pre-fills title/duration when creating from a template
-    var onSave: (() -> Void)? = nil    // called after a successful save (for parent sheet dismissal)
+    var prefill: TaskTemplate? = nil
+    var onSave: (() -> Void)? = nil
     let date: Date
     let prayerTimes: [PrayerTime]
 
@@ -14,12 +14,15 @@ struct TaskEditorSheet: View {
     @State private var title           = ""
     @State private var startTime       = Date()
     @State private var durationMins    = 30
-    @State private var selectedCat: Category?
     @State private var isCompleted     = false
-    @State private var linkedTemplate: TaskTemplate? = nil  // persisted link to a task type
+    @State private var linkedTemplate: TaskTemplate? = nil
+    @State private var checklistItems: [String] = []
+    @State private var completedItems: Set<String> = []
+    @State private var newItemText     = ""
 
     private var isEditing: Bool { task != nil }
     private var isLinkedToType: Bool { linkedTemplate != nil }
+    private var isPrayer: Bool { task?.prayerBlock != nil && linkedTemplate == nil }
 
     var body: some View {
         NavigationStack {
@@ -36,21 +39,57 @@ struct TaskEditorSheet: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Section {
-                    CategoryPicker(selected: $selectedCat)
-                }
-
-                Section {
-                    if isLinkedToType {
-                        Label("Saved as \"\(linkedTemplate!.name)\"", systemImage: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                    } else {
-                        Button {
-                            saveAsTaskType()
-                        } label: {
-                            Label("Save as Task Type", systemImage: "bookmark")
+                if !isPrayer {
+                    Section {
+                        if isLinkedToType {
+                            Label("Saved as \"\(linkedTemplate!.name)\"", systemImage: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                        } else {
+                            Button {
+                                saveAsTaskType()
+                            } label: {
+                                Label("Save as Task Type", systemImage: "bookmark")
+                            }
+                            .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
                         }
-                        .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
+                    }
+
+                    Section {
+                        ForEach(checklistItems, id: \.self) { item in
+                            HStack(spacing: 12) {
+                                Image(systemName: completedItems.contains(item) ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(completedItems.contains(item) ? .green : .secondary)
+                                Text(item)
+                                    .strikethrough(completedItems.contains(item))
+                                    .foregroundStyle(completedItems.contains(item) ? .secondary : .primary)
+                                Spacer()
+                                Button(role: .destructive) {
+                                    checklistItems.removeAll { $0 == item }
+                                    completedItems.remove(item)
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                }
+                                .font(.system(size: 16))
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                if completedItems.contains(item) {
+                                    completedItems.remove(item)
+                                } else {
+                                    completedItems.insert(item)
+                                }
+                            }
+                        }
+                        HStack {
+                            TextField("Add checklist item", text: $newItemText)
+                            Button(action: addChecklistItem) {
+                                Image(systemName: "plus.circle.fill")
+                                    .foregroundStyle(.blue)
+                            }
+                            .disabled(newItemText.trimmingCharacters(in: .whitespaces).isEmpty)
+                        }
+                    } header: {
+                        Text("Checklist")
                     }
                 }
 
@@ -81,22 +120,27 @@ struct TaskEditorSheet: View {
         }
     }
 
-    // MARK: - Populate
+    private func addChecklistItem() {
+        let item = newItemText.trimmingCharacters(in: .whitespaces)
+        guard !item.isEmpty else { return }
+        checklistItems.append(item)
+        newItemText = ""
+    }
 
     private func populate() {
         if let t = task {
-            title          = t.title
-            startTime      = t.startTime ?? defaultStartTime()
-            durationMins   = t.durationMinutes ?? 30
-            selectedCat    = t.category
-            isCompleted    = t.isCompleted
-            linkedTemplate = t.taskType
+            title           = t.title
+            startTime       = t.startTime ?? defaultStartTime()
+            durationMins    = t.durationMinutes ?? 30
+            isCompleted     = t.isCompleted
+            linkedTemplate  = t.taskType
+            checklistItems  = t.checklistItems
+            completedItems  = Set(t.completedItemNames)
         } else if let p = prefill {
-            title          = p.path          // e.g. "Course Work → Assignment"
-            durationMins   = p.durationMinutes
-            selectedCat    = p.category
-            startTime      = defaultStartTime()
-            linkedTemplate = p
+            title           = p.path
+            durationMins    = p.durationMinutes
+            startTime       = defaultStartTime()
+            linkedTemplate  = p
         } else {
             startTime = defaultStartTime()
         }
@@ -113,20 +157,14 @@ struct TaskEditorSheet: View {
         ) ?? date
     }
 
-    // MARK: - Save as task type
-
     private func saveAsTaskType() {
         let cleanTitle = title.trimmingCharacters(in: .whitespaces)
         guard !cleanTitle.isEmpty else { return }
         let template = TaskTemplate(name: cleanTitle, durationMinutes: durationMins)
-        template.category = selectedCat
         ctx.insert(template)
         linkedTemplate = template
-        // Persist the link immediately if editing an existing task
         task?.taskType = template
     }
-
-    // MARK: - Save task
 
     private func prayerBlock(for time: Date) -> String {
         for (i, prayer) in prayerTimes.enumerated() {
@@ -156,19 +194,21 @@ struct TaskEditorSheet: View {
             t.startTime       = computedStart
             t.durationMinutes = durationMins
             t.prayerBlock     = block
-            t.category        = selectedCat
             t.isCompleted     = isCompleted
             t.taskType        = linkedTemplate
+            t.checklistItems  = checklistItems
+            t.completedItemNames = Array(completedItems).sorted()
         } else {
             let newTask = PlanTask(
                 title:           cleanTitle,
                 date:            base,
                 prayerBlock:     block,
                 startTime:       computedStart,
-                durationMinutes: durationMins,
-                category:        selectedCat
+                durationMinutes: durationMins
             )
             newTask.taskType = linkedTemplate
+            newTask.checklistItems = checklistItems
+            newTask.completedItemNames = Array(completedItems).sorted()
             ctx.insert(newTask)
         }
         onSave?()

@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 import SwiftData
 
 @Model
@@ -9,7 +10,8 @@ final class PlanTask {
     var startTime: Date?
     var durationMinutes: Int?
     var isCompleted: Bool
-    @Relationship(deleteRule: .nullify) var category: Category?
+    var checklistItems: [String] = []
+    var completedItemNames: [String] = []
     @Relationship(deleteRule: .nullify) var taskType: TaskTemplate?
 
     init(
@@ -17,8 +19,7 @@ final class PlanTask {
         date: Date,
         prayerBlock: String,
         startTime: Date? = nil,
-        durationMinutes: Int? = nil,
-        category: Category? = nil
+        durationMinutes: Int? = nil
     ) {
         self.title = title
         self.date = date
@@ -26,6 +27,26 @@ final class PlanTask {
         self.startTime = startTime
         self.durationMinutes = durationMinutes
         self.isCompleted = false
-        self.category = category
+        self.checklistItems = []
+        self.completedItemNames = []
+    }
+
+    var color: Color {
+        guard let hex = taskType?.colorHex else { return Color.blue }
+        return Color(hex: hex)
+    }
+
+    var icon: String {
+        taskType?.symbolName ?? "circle.fill"
+    }
+
+    var completedItems: Set<String> {
+        Set(completedItemNames)
+    }
+
+    func setCompletedItems(_ items: Set<String>) {
+        completedItemNames = Array(items).sorted()
     }
 }
+
+

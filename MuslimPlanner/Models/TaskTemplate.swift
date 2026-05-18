@@ -6,14 +6,17 @@ final class TaskTemplate {
     var name: String
     var durationMinutes: Int
     var sortOrder: Int
-    @Relationship(deleteRule: .nullify) var category: Category?
+    var colorHex: String = "007AFF"
+    var symbolName: String = "circle.fill"
     @Relationship(deleteRule: .cascade, inverse: \TaskTemplate.parent) var subtasks: [TaskTemplate]
     var parent: TaskTemplate?
 
-    init(name: String, durationMinutes: Int = 30, sortOrder: Int = 0) {
+    init(name: String, durationMinutes: Int = 30, sortOrder: Int = 0, colorHex: String = "007AFF", symbolName: String = "circle.fill") {
         self.name = name
         self.durationMinutes = durationMinutes
         self.sortOrder = sortOrder
+        self.colorHex = colorHex
+        self.symbolName = symbolName
         self.subtasks = []
     }
 

@@ -10,9 +10,12 @@ struct TaskTemplateEditorSheet: View {
 
     @State private var name         = ""
     @State private var durationMins = 30
-    @State private var selectedCat: Category?
+    @State private var colorHex     = "007AFF"
+    @State private var symbolName   = "circle.fill"
     @State private var subtasks: [TaskTemplate] = []
     @State private var showSubtaskPicker = false
+    @State private var showColorPicker = false
+    @State private var showIconPicker = false
 
     private var isEditing: Bool { template != nil }
 
@@ -27,8 +30,30 @@ struct TaskTemplateEditorSheet: View {
                     Stepper("\(durationMins) min", value: $durationMins, in: 5...480, step: 5)
                 }
 
-                Section {
-                    CategoryPicker(selected: $selectedCat)
+                Section("Appearance") {
+                    HStack {
+                        Text("Color")
+                        Spacer()
+                        Button(action: { showColorPicker = true }) {
+                            Circle().fill(Color(hex: colorHex)).frame(width: 32, height: 32)
+                        }
+                    }
+                    .sheet(isPresented: $showColorPicker) {
+                        ColorPickerSheet(selectedColor: $colorHex, dismiss: $showColorPicker)
+                    }
+                    HStack {
+                        Text("Icon")
+                        Spacer()
+                        HStack(spacing: 8) {
+                            Image(systemName: symbolName).font(.system(size: 20))
+                            Button(action: { showIconPicker = true }) {
+                                Text("Change").font(.caption)
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $showIconPicker) {
+                        IconPickerSheet(selectedIcon: $symbolName, dismiss: $showIconPicker)
+                    }
                 }
 
                 Section {
@@ -79,8 +104,6 @@ struct TaskTemplateEditorSheet: View {
         }
     }
 
-    // Templates eligible to be added as subtasks:
-    // not self, not already in the list, not already a subtask of this template
     private var availableSubtasks: [TaskTemplate] {
         allTemplates.filter { t in
             t.persistentModelID != template?.persistentModelID &&
@@ -92,7 +115,8 @@ struct TaskTemplateEditorSheet: View {
         guard let t = template else { return }
         name         = t.name
         durationMins = t.durationMinutes
-        selectedCat  = t.category
+        colorHex     = t.colorHex
+        symbolName   = t.symbolName
         subtasks     = t.sortedSubtasks
     }
 
@@ -103,18 +127,17 @@ struct TaskTemplateEditorSheet: View {
         if let t = template {
             t.name            = cleanName
             t.durationMinutes = durationMins
-            t.category        = selectedCat
+            t.colorHex        = colorHex
+            t.symbolName      = symbolName
             applySubtasks(to: t)
         } else {
-            let t = TaskTemplate(name: cleanName, durationMinutes: durationMins)
-            t.category = selectedCat
+            let t = TaskTemplate(name: cleanName, durationMinutes: durationMins, colorHex: colorHex, symbolName: symbolName)
             ctx.insert(t)
             applySubtasks(to: t)
         }
         dismiss()
     }
 
-    // Update subtasks array and sort order. SwiftData auto-manages parent inverse.
     private func applySubtasks(to parent: TaskTemplate) {
         for (i, sub) in subtasks.enumerated() {
             sub.sortOrder = i
@@ -135,7 +158,6 @@ private struct SubtaskPickerSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                // ── Create a brand-new subtask inline ──
                 Section {
                     NavigationLink {
                         NewSubtaskForm { newTemplate in
@@ -148,7 +170,6 @@ private struct SubtaskPickerSheet: View {
                     }
                 }
 
-                // ── Pick from existing task types ──
                 if !templates.isEmpty {
                     Section("Existing Task Types") {
                         ForEach(templates) { t in
@@ -193,7 +214,6 @@ private struct NewSubtaskForm: View {
 
     @State private var name         = ""
     @State private var durationMins = 30
-    @State private var selectedCat: Category?
 
     var body: some View {
         Form {
@@ -203,9 +223,6 @@ private struct NewSubtaskForm: View {
             Section("Duration") {
                 Stepper("\(durationMins) min", value: $durationMins, in: 5...480, step: 5)
             }
-            Section {
-                CategoryPicker(selected: $selectedCat)
-            }
         }
         .navigationTitle("New Subtask")
         .navigationBarTitleDisplayMode(.inline)
@@ -214,7 +231,6 @@ private struct NewSubtaskForm: View {
                 Button("Add") {
                     let t = TaskTemplate(name: name.trimmingCharacters(in: .whitespaces),
                                         durationMinutes: durationMins)
-                    t.category = selectedCat
                     onSave(t)
                 }
                 .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -222,3 +238,88 @@ private struct NewSubtaskForm: View {
         }
     }
 }
+
+// MARK: - Icon picker
+
+private struct IconPickerSheet: View {
+    @Binding var selectedIcon: String
+    @Binding var dismiss: Bool
+
+    let commonIcons = [
+        "circle.fill", "square.fill", "star.fill", "heart.fill",
+        "bookmark.fill", "flag.fill", "bell.fill", "clock.fill",
+        "checkmark.circle.fill", "pencil.circle.fill", "trash.circle.fill",
+        "book.fill", "briefcase.fill", "fork.knife", "dumbbell.fill",
+        "person.fill", "building.fill", "car.fill", "airplane",
+        "music.note", "film.fill", "gamecontroller.fill", "palette.fill"
+    ]
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 16) {
+                    ForEach(commonIcons, id: \.self) { icon in
+                        Button(action: {
+                            selectedIcon = icon
+                            self.dismiss = false
+                        }) {
+                            VStack {
+                                Image(systemName: icon)
+                                    .font(.system(size: 28))
+                                    .foregroundStyle(selectedIcon == icon ? .green : .primary)
+                            }
+                            .frame(height: 50)
+                        }
+                    }
+                }
+                .padding()
+            }
+            .navigationTitle("Choose Icon")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
+// MARK: - Color picker
+
+private struct ColorPickerSheet: View {
+    @Binding var selectedColor: String
+    @Binding var dismiss: Bool
+
+    let colors = [
+        "FF3B30", "FF9500", "FFCC00", "34C759", "00C7BE",
+        "00B4D8", "0A84FF", "5856D6", "AF52DE", "FF2D55",
+        "A2845E", "8E7CC3", "007AFF", "5AC8FA", "50E3C2"
+    ]
+    let colorNames = [
+        "Red", "Orange", "Yellow", "Green", "Teal",
+        "Cyan", "Blue", "Purple", "Pink", "Rose",
+        "Brown", "Lavender", "Royal Blue", "Sky Blue", "Mint"
+    ]
+
+    var body: some View {
+        NavigationStack {
+            List {
+                ForEach(Array(colors.enumerated()), id: \.offset) { idx, color in
+                    HStack {
+                        Circle().fill(Color(hex: color)).frame(width: 30, height: 30)
+                        Text(colorNames[idx])
+                        Spacer()
+                        if selectedColor == color {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(.green)
+                        }
+                    }
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        selectedColor = color
+                        dismiss = false
+                    }
+                }
+            }
+            .navigationTitle("Choose Color")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+

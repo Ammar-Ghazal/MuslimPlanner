@@ -11,7 +11,6 @@
 		18D25DD4AB88420FE3C86749 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC42FD5DCEA1C85F097478F5 /* ContentView.swift */; };
 		39640412088E46C6F8AC0327 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED1C2FC2F1C141380E7E9D5 /* TimelineView.swift */; };
 		41D804868C5152897B0CC656 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D639B414425E39E624DADC0 /* AppSettings.swift */; };
-		4250701316059F408C11BC11 /* CategoryPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97C2AC28C318C470153E830 /* CategoryPicker.swift */; };
 		4D239FD43DCAF60916AB8A90 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E4809910FF741EC4D57D4 /* Extensions.swift */; };
 		617C61381CAC49360E238120 /* PrayerTimeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1C64B5FFA5F3DFC2E756D0 /* PrayerTimeService.swift */; };
 		6821EFEA13024534303ABEA0 /* SwiftData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */; };
@@ -21,9 +20,7 @@
 		954801C9BD5EA85EAC65B20E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A82412766D38719C8E6F59 /* MainTabView.swift */; };
 		9DE9509DA201C52F9EF8587C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0C512871DD7A596F089F7 /* SettingsView.swift */; };
 		A3B07BF4AE04E439D6C683C4 /* TaskTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265FF3F38006DD8F325A929C /* TaskTemplate.swift */; };
-		A4603E4A9D2237F77DC06EF2 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188A691526794C1A8A15160A /* Category.swift */; };
 		B2DA62F5C28CCE5291B157FB /* TaskTemplateEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */; };
-		BC6FEACD5112624BCD1C1A98 /* CategoryManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */; };
 		C0C474E2384E1D24A7F5C8DE /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20664468F9BBD341BBE40F2E /* LocationService.swift */; };
 		C4EE921562296FA76AE3379E /* PrayerAnchorRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D3AF9382BE82978BE15F06 /* PrayerAnchorRow.swift */; };
 		CE8C0642210E908DDA16B4FF /* MuslimPlannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8387FC484D145B0A35CCD688 /* MuslimPlannerApp.swift */; };
@@ -37,7 +34,6 @@
 /* Begin PBXFileReference section */
 		067312DD0D64CFAC1EF551C4 /* PlanTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanTask.swift; sourceTree = "<group>"; };
 		094EDFC40186B1DA4379B5A8 /* DayPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPlanViewModel.swift; sourceTree = "<group>"; };
-		188A691526794C1A8A15160A /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		20664468F9BBD341BBE40F2E /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		265FF3F38006DD8F325A929C /* TaskTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplate.swift; sourceTree = "<group>"; };
 		2D2CFF90C8950A503C7A5652 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -53,9 +49,7 @@
 		9E1C64B5FFA5F3DFC2E756D0 /* PrayerTimeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerTimeService.swift; sourceTree = "<group>"; };
 		9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftData.framework; path = System/Library/Frameworks/SwiftData.framework; sourceTree = SDKROOT; };
 		A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplateEditorSheet.swift; sourceTree = "<group>"; };
-		A97C2AC28C318C470153E830 /* CategoryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPicker.swift; sourceTree = "<group>"; };
 		BC42FD5DCEA1C85F097478F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryManagerView.swift; sourceTree = "<group>"; };
 		D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DD3E4809910FF741EC4D57D4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E17B12A516D6C6A03AEC3749 /* MuslimPlanner.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MuslimPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,7 +95,6 @@
 		2C476BEA785E69ECACA76700 /* TaskEditor */ = {
 			isa = PBXGroup;
 			children = (
-				A97C2AC28C318C470153E830 /* CategoryPicker.swift */,
 				3CF0203954274F94D249397F /* TaskEditorSheet.swift */,
 			);
 			path = TaskEditor;
@@ -126,7 +119,6 @@
 		65B6D1179026251474B6A99B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
-				C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */,
 				32F0C512871DD7A596F089F7 /* SettingsView.swift */,
 				6E94CEBE8E20B59E5FDE4E61 /* TaskTypeManagerView.swift */,
 			);
@@ -145,7 +137,6 @@
 			isa = PBXGroup;
 			children = (
 				4D639B414425E39E624DADC0 /* AppSettings.swift */,
-				188A691526794C1A8A15160A /* Category.swift */,
 				067312DD0D64CFAC1EF551C4 /* PlanTask.swift */,
 				265FF3F38006DD8F325A929C /* TaskTemplate.swift */,
 			);
@@ -273,9 +264,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				41D804868C5152897B0CC656 /* AppSettings.swift in Sources */,
-				A4603E4A9D2237F77DC06EF2 /* Category.swift in Sources */,
-				BC6FEACD5112624BCD1C1A98 /* CategoryManagerView.swift in Sources */,
-				4250701316059F408C11BC11 /* CategoryPicker.swift in Sources */,
 				18D25DD4AB88420FE3C86749 /* ContentView.swift in Sources */,
 				7F018A5174FB90A32BD285B9 /* DayPlanViewModel.swift in Sources */,
 				4D239FD43DCAF60916AB8A90 /* Extensions.swift in Sources */,

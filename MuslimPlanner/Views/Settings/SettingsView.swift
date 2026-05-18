@@ -76,13 +76,10 @@ struct SettingsView: View {
                     }
                 }
 
-                // Task types & categories
+                // Task types
                 Section {
                     NavigationLink("Task Types") {
                         TaskTypeManagerView()
-                    }
-                    NavigationLink("Manage Categories") {
-                        CategoryManagerView()
                     }
                 }
 
