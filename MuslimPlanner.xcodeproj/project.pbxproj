@@ -20,12 +20,16 @@
 		880396B4A9CA57AB2FE7A86B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */; };
 		954801C9BD5EA85EAC65B20E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A82412766D38719C8E6F59 /* MainTabView.swift */; };
 		9DE9509DA201C52F9EF8587C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0C512871DD7A596F089F7 /* SettingsView.swift */; };
+		A3B07BF4AE04E439D6C683C4 /* TaskTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265FF3F38006DD8F325A929C /* TaskTemplate.swift */; };
 		A4603E4A9D2237F77DC06EF2 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188A691526794C1A8A15160A /* Category.swift */; };
+		B2DA62F5C28CCE5291B157FB /* TaskTemplateEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */; };
 		BC6FEACD5112624BCD1C1A98 /* CategoryManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */; };
 		C0C474E2384E1D24A7F5C8DE /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20664468F9BBD341BBE40F2E /* LocationService.swift */; };
 		C4EE921562296FA76AE3379E /* PrayerAnchorRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D3AF9382BE82978BE15F06 /* PrayerAnchorRow.swift */; };
 		CE8C0642210E908DDA16B4FF /* MuslimPlannerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8387FC484D145B0A35CCD688 /* MuslimPlannerApp.swift */; };
+		DB5F6C2F3A438425A82E254A /* TaskTypePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85DF074423EC4A1BE03CEB41 /* TaskTypePickerSheet.swift */; };
 		E71E063E5EDFEF4C6DED0065 /* TaskEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CF0203954274F94D249397F /* TaskEditorSheet.swift */; };
+		EE145E8D6F2EA1703C1F6282 /* TaskTypeManagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E94CEBE8E20B59E5FDE4E61 /* TaskTypeManagerView.swift */; };
 		EE9624F03831B0C4CEEEA309 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 49D2D45CE44D6DCC663D58A7 /* UserNotifications.framework */; };
 		F0B5BB8655CD786C37FE0BE9 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4771C86F6F25821663DC3757 /* OnboardingView.swift */; };
 /* End PBXBuildFile section */
@@ -35,6 +39,7 @@
 		094EDFC40186B1DA4379B5A8 /* DayPlanViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayPlanViewModel.swift; sourceTree = "<group>"; };
 		188A691526794C1A8A15160A /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		20664468F9BBD341BBE40F2E /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		265FF3F38006DD8F325A929C /* TaskTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplate.swift; sourceTree = "<group>"; };
 		2D2CFF90C8950A503C7A5652 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		32F0C512871DD7A596F089F7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		35A82412766D38719C8E6F59 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -42,9 +47,12 @@
 		4771C86F6F25821663DC3757 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		49D2D45CE44D6DCC663D58A7 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		4D639B414425E39E624DADC0 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		6E94CEBE8E20B59E5FDE4E61 /* TaskTypeManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeManagerView.swift; sourceTree = "<group>"; };
 		8387FC484D145B0A35CCD688 /* MuslimPlannerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuslimPlannerApp.swift; sourceTree = "<group>"; };
+		85DF074423EC4A1BE03CEB41 /* TaskTypePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypePickerSheet.swift; sourceTree = "<group>"; };
 		9E1C64B5FFA5F3DFC2E756D0 /* PrayerTimeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerTimeService.swift; sourceTree = "<group>"; };
 		9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftData.framework; path = System/Library/Frameworks/SwiftData.framework; sourceTree = SDKROOT; };
+		A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplateEditorSheet.swift; sourceTree = "<group>"; };
 		A97C2AC28C318C470153E830 /* CategoryPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryPicker.swift; sourceTree = "<group>"; };
 		BC42FD5DCEA1C85F097478F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryManagerView.swift; sourceTree = "<group>"; };
@@ -69,12 +77,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		03BDA22E76159157EB93550E /* Tasks */ = {
+			isa = PBXGroup;
+			children = (
+				A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */,
+				85DF074423EC4A1BE03CEB41 /* TaskTypePickerSheet.swift */,
+			);
+			path = Tasks;
+			sourceTree = "<group>";
+		};
 		066E28E3D2C1653A898ED806 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				EEBF4A883A346EE58329DD22 /* Onboarding */,
 				65B6D1179026251474B6A99B /* Settings */,
 				2C476BEA785E69ECACA76700 /* TaskEditor */,
+				03BDA22E76159157EB93550E /* Tasks */,
 				79D0BC5453673CFF4954B421 /* Timeline */,
 			);
 			path = Views;
@@ -110,6 +128,7 @@
 			children = (
 				C6D61E1A5F0810D7D88115C0 /* CategoryManagerView.swift */,
 				32F0C512871DD7A596F089F7 /* SettingsView.swift */,
+				6E94CEBE8E20B59E5FDE4E61 /* TaskTypeManagerView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -128,6 +147,7 @@
 				4D639B414425E39E624DADC0 /* AppSettings.swift */,
 				188A691526794C1A8A15160A /* Category.swift */,
 				067312DD0D64CFAC1EF551C4 /* PlanTask.swift */,
+				265FF3F38006DD8F325A929C /* TaskTemplate.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -269,6 +289,10 @@
 				617C61381CAC49360E238120 /* PrayerTimeService.swift in Sources */,
 				9DE9509DA201C52F9EF8587C /* SettingsView.swift in Sources */,
 				E71E063E5EDFEF4C6DED0065 /* TaskEditorSheet.swift in Sources */,
+				A3B07BF4AE04E439D6C683C4 /* TaskTemplate.swift in Sources */,
+				B2DA62F5C28CCE5291B157FB /* TaskTemplateEditorSheet.swift in Sources */,
+				EE145E8D6F2EA1703C1F6282 /* TaskTypeManagerView.swift in Sources */,
+				DB5F6C2F3A438425A82E254A /* TaskTypePickerSheet.swift in Sources */,
 				39640412088E46C6F8AC0327 /* TimelineView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

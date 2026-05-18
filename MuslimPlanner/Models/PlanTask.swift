@@ -10,6 +10,7 @@ final class PlanTask {
     var durationMinutes: Int?
     var isCompleted: Bool
     @Relationship(deleteRule: .nullify) var category: Category?
+    @Relationship(deleteRule: .nullify) var taskType: TaskTemplate?
 
     init(
         title: String,

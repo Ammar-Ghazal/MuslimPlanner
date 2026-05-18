@@ -6,7 +6,7 @@ struct MuslimPlannerApp: App {
     @StateObject private var locationService = LocationService()
 
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([PlanTask.self, Category.self, AppSettings.self])
+        let schema = Schema([PlanTask.self, Category.self, AppSettings.self, TaskTemplate.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
             return try ModelContainer(for: schema, configurations: [config])

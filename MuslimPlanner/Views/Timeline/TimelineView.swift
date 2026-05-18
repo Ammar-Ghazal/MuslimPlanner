@@ -14,8 +14,9 @@ struct TimelineView: View {
     @Query private var allTasks: [PlanTask]
     @Environment(\.modelContext) private var ctx
 
-    @State private var showEditor  = false
+    @State private var showEditor     = false
     @State private var editingTask: PlanTask?
+    @State private var showTypePicker = false
 
     // Drag state — only one task dragged at a time
     @State private var draggingID: PersistentIdentifier? = nil
@@ -103,6 +104,12 @@ struct TimelineView: View {
                 prayerTimes: viewModel.prayerTimes
             )
             .onDisappear { editingTask = nil }
+        }
+        .sheet(isPresented: $showTypePicker) {
+            TaskTypePickerSheet(
+                date: viewModel.selectedDate,
+                prayerTimes: viewModel.prayerTimes
+            )
         }
         .overlay(alignment: .bottomTrailing) {
             addButton
@@ -248,8 +255,7 @@ struct TimelineView: View {
 
     private var addButton: some View {
         Button {
-            editingTask = nil
-            showEditor  = true
+            showTypePicker = true
         } label: {
             Image(systemName: "plus")
                 .font(.title2.bold())
