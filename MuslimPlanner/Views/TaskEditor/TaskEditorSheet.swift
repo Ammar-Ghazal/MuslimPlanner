@@ -89,7 +89,7 @@ struct TaskEditorSheet: View {
             // Type picker: a simple flat list of all templates (sheet-within-sheet is fine here
             // since it's just a list — no further navigation required)
             .sheet(isPresented: $showTypePicker) {
-                TemplateTreePickerSheet { chosen in
+                TemplateTreePickerSheet(constrainedTo: linkedTemplate.map(\.root)) { chosen in
                     linkedTemplate = chosen
                     title = chosen.displayTitle
                     showTypePicker = false
@@ -178,6 +178,9 @@ struct TaskEditorSheet: View {
 // Lives here so it can call back into TaskEditorSheet without circular deps.
 
 private struct TemplateTreePickerSheet: View {
+    /// When set, the picker is scoped to this root's subtree only.
+    /// When nil (task has no type yet), all root templates are shown.
+    let constrainedTo: TaskTemplate?
     let onPick: (TaskTemplate) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -188,27 +191,58 @@ private struct TemplateTreePickerSheet: View {
     var body: some View {
         NavigationStack {
             List {
-                if rootTemplates.isEmpty {
-                    ContentUnavailableView(
-                        "No Task Types",
-                        systemImage: "list.bullet.rectangle",
-                        description: Text("Add task types in Settings → Task Types.")
-                    )
+                if let root = constrainedTo {
+                    // Scoped view: only show this root's subtree
+                    if root.subtasks.isEmpty {
+                        // Root has no subtasks — nothing to change to
+                        ContentUnavailableView(
+                            "No Subtypes",
+                            systemImage: "square.stack",
+                            description: Text("\(root.name) has no subtypes defined.")
+                        )
+                    } else {
+                        Section {
+                            ForEach(root.sortedSubtasks) { sub in
+                                Button { onPick(sub); dismiss() } label: { templateRow(sub) }
+                            }
+                        }
+                        Section {
+                            Button { onPick(root); dismiss() } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: root.symbolName)
+                                        .foregroundStyle(Color(hex: root.colorHex).opacity(0.5))
+                                        .frame(width: 24)
+                                    Text("No subtype – just \(root.name)").foregroundStyle(.secondary)
+                                    Spacer()
+                                    Text("\(root.durationMinutes)m").font(.caption).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
                 } else {
-                    ForEach(rootTemplates) { template in
-                        if template.subtasks.isEmpty {
-                            Button { onPick(template); dismiss() } label: { templateRow(template) }
-                        } else {
-                            NavigationLink {
-                                subtaskPicker(for: template)
-                            } label: {
-                                templateRow(template)
+                    // Unconstrained: show all roots (task has no type yet)
+                    if rootTemplates.isEmpty {
+                        ContentUnavailableView(
+                            "No Task Types",
+                            systemImage: "list.bullet.rectangle",
+                            description: Text("Add task types in Settings → Task Types.")
+                        )
+                    } else {
+                        ForEach(rootTemplates) { template in
+                            if template.subtasks.isEmpty {
+                                Button { onPick(template); dismiss() } label: { templateRow(template) }
+                            } else {
+                                NavigationLink {
+                                    subtaskPicker(for: template)
+                                } label: {
+                                    templateRow(template)
+                                }
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Select Type")
+            .navigationTitle(constrainedTo.map { "Change \($0.name)" } ?? "Select Type")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -232,7 +266,7 @@ private struct TemplateTreePickerSheet: View {
                         Image(systemName: parent.symbolName)
                             .foregroundStyle(Color(hex: parent.colorHex).opacity(0.5))
                             .frame(width: 24)
-                        Text("No subtask – just \(parent.name)").foregroundStyle(.secondary)
+                        Text("No subtype – just \(parent.name)").foregroundStyle(.secondary)
                         Spacer()
                         Text("\(parent.durationMinutes)m").font(.caption).foregroundStyle(.secondary)
                     }

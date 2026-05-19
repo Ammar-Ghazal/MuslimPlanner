@@ -26,6 +26,13 @@ final class TaskTemplate {
 
     var isRoot: Bool { parent == nil }
 
+    // Traverse up to the top-most ancestor
+    var root: TaskTemplate {
+        var current: TaskTemplate = self
+        while let p = current.parent { current = p }
+        return current
+    }
+
     var sortedSubtasks: [TaskTemplate] {
         subtasks.sorted { $0.sortOrder < $1.sortOrder }
     }
