@@ -291,56 +291,214 @@ struct TimelineView: View {
     }
 }
 
-// MARK: - Task card view
+// MARK: - Task card view (3-panel layout)
 
 struct TimedTaskCard: View {
     @Bindable var task: PlanTask
     let onTap: () -> Void
 
+    @Environment(\.modelContext) private var ctx
+    @State private var showTypePicker = false
+
+    // True when there is at least one alternative to switch to within the same family
+    private var hasAlternatives: Bool {
+        guard let t = task.taskType else { return false }
+        return !t.root.subtasks.isEmpty
+    }
+
     var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            // Left color bar
-            RoundedRectangle(cornerRadius: 2)
-                .fill(task.color)
-                .frame(width: 4)
+        let stroke = task.color.opacity(task.isCompleted ? 0.15 : 0.3)
 
-            // Title + time range
-            VStack(alignment: .leading, spacing: 2) {
-                Text(task.title)
-                    .font(.caption.weight(.semibold))
-                    .lineLimit(2)
-                    .strikethrough(task.isCompleted)
-                    .foregroundStyle(task.isCompleted ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
+        HStack(spacing: 0) {
 
-                if let start = task.startTime {
-                    let end = start.addingTimeInterval(Double((task.durationMinutes ?? 30) * 60))
-                    Text("\(start.formatted(.dateTime.hour().minute())) – \(end.formatted(.dateTime.hour().minute()))")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
+            // ── Left panel: name + time ───────────────────────────────────────
+            HStack(spacing: 0) {
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(task.color)
+                    .frame(width: 4)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(task.title)
+                        .font(.caption.weight(.semibold))
+                        .lineLimit(2)
+                        .strikethrough(task.isCompleted)
+                        .foregroundStyle(task.isCompleted ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
+
+                    if let start = task.startTime {
+                        let end = start.addingTimeInterval(Double((task.durationMinutes ?? 30) * 60))
+                        Text("\(start.formatted(.dateTime.hour().minute())) – \(end.formatted(.dateTime.hour().minute()))")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                    }
                 }
+                .padding(.leading, 8)
+                .padding(.vertical, 4)
+
+                Spacer(minLength: 0)
             }
-            .padding(.leading, 8)
-            .padding(.vertical, 6)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .onTapGesture { onTap() }
 
-            Spacer(minLength: 0)
+            Rectangle().fill(stroke).frame(width: 0.5)
 
-            // Completion checkbox
+            // ── Middle panel: switch subtype ──────────────────────────────────
             Button {
-                task.isCompleted.toggle()
+                showTypePicker = true
             } label: {
-                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 18))
-                    .foregroundStyle(task.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.secondary.opacity(0.4)))
+                Image(systemName: "arrow.2.circlepath")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(hasAlternatives
+                        ? AnyShapeStyle(.secondary)
+                        : AnyShapeStyle(Color.secondary.opacity(0.2)))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .buttonStyle(.plain)
-            .padding(.trailing, 10)
+            .disabled(!hasAlternatives)
+
+            Rectangle().fill(stroke).frame(width: 0.5)
+
+            // ── Right panel: completion toggle ────────────────────────────────
+            Button {
+                task.isCompleted.toggle()
+                try? ctx.save()
+            } label: {
+                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 26))
+                    .foregroundStyle(task.isCompleted
+                        ? AnyShapeStyle(Color.green)
+                        : AnyShapeStyle(task.color.opacity(0.45)))
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
+            .buttonStyle(.plain)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .opacity(task.isCompleted ? 0.55 : 1.0)
         .background(task.color.opacity(task.isCompleted ? 0.05 : 0.10))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(task.color.opacity(task.isCompleted ? 0.15 : 0.3), lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(stroke, lineWidth: 1))
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .contentShape(Rectangle())
-        .onTapGesture { onTap() }
+        .sheet(isPresented: $showTypePicker) {
+            CardTypePickerSheet(task: task)
+        }
+    }
+}
+
+// MARK: - Card type picker (constrained to current root's family)
+
+private struct CardTypePickerSheet: View {
+    @Bindable var task: PlanTask
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var ctx
+    @Query(sort: \TaskTemplate.name) private var allTemplates: [TaskTemplate]
+
+    private var currentRoot: TaskTemplate? { task.taskType?.root }
+    private var currentID: PersistentIdentifier? { task.taskType?.persistentModelID }
+    private var rootTemplates: [TaskTemplate] { allTemplates.filter(\.isRoot) }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if let root = currentRoot {
+                    let alternatives = root.sortedSubtasks.filter {
+                        $0.persistentModelID != currentID
+                    }
+
+                    // Other subtasks within the same family
+                    if !alternatives.isEmpty {
+                        Section {
+                            ForEach(alternatives) { sub in
+                                Button { pick(sub) } label: { templateRow(sub) }
+                            }
+                        }
+                    }
+
+                    // "Just [root]" — only if currently on a subtask
+                    if currentID != root.persistentModelID {
+                        Section {
+                            Button { pick(root) } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: root.symbolName)
+                                        .foregroundStyle(Color(hex: root.colorHex).opacity(0.55))
+                                        .frame(width: 24)
+                                    Text("No subtype – just \(root.name)")
+                                        .foregroundStyle(.secondary)
+                                    Spacer()
+                                    Text("\(root.durationMinutes)m")
+                                        .font(.caption).foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // No type yet — show full tree so user can set one
+                    ForEach(rootTemplates) { t in
+                        if t.subtasks.isEmpty {
+                            Button { pick(t) } label: { templateRow(t) }
+                        } else {
+                            NavigationLink {
+                                subtaskList(for: t)
+                            } label: { templateRow(t) }
+                        }
+                    }
+                }
+            }
+            .navigationTitle(currentRoot.map { "Switch \($0.name)" } ?? "Set Type")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func subtaskList(for parent: TaskTemplate) -> some View {
+        List {
+            Section {
+                ForEach(parent.sortedSubtasks) { sub in
+                    Button { pick(sub) } label: { templateRow(sub) }
+                }
+            }
+            Section {
+                Button { pick(parent) } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: parent.symbolName)
+                            .foregroundStyle(Color(hex: parent.colorHex).opacity(0.55))
+                            .frame(width: 24)
+                        Text("No subtype – just \(parent.name)").foregroundStyle(.secondary)
+                        Spacer()
+                        Text("\(parent.durationMinutes)m").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .navigationTitle(parent.name)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    @ViewBuilder
+    private func templateRow(_ t: TaskTemplate) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: t.symbolName)
+                .foregroundStyle(Color(hex: t.colorHex))
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(t.displayTitle).foregroundStyle(.primary)
+                if t.parent != nil {
+                    Text(t.path).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            Spacer()
+            Text("\(t.durationMinutes)m").font(.caption).foregroundStyle(.secondary)
+        }
+    }
+
+    private func pick(_ template: TaskTemplate) {
+        task.taskType = template
+        task.title = template.displayTitle
+        try? ctx.save()
+        dismiss()
     }
 }
