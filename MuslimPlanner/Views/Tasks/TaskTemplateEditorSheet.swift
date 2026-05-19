@@ -135,11 +135,19 @@ struct TaskTemplateEditorSheet: View {
             ctx.insert(t)
             applySubtasks(to: t)
         }
+        try? ctx.save()
         dismiss()
     }
 
     private func applySubtasks(to parent: TaskTemplate) {
+        // Clear parent on any subtasks that were removed from the list
+        let keepIDs = Set(subtasks.map { $0.persistentModelID })
+        for sub in parent.subtasks where !keepIDs.contains(sub.persistentModelID) {
+            sub.parent = nil
+        }
+        // Set parent and order on every subtask in the new list
         for (i, sub) in subtasks.enumerated() {
+            sub.parent = parent
             sub.sortOrder = i
         }
         parent.subtasks = subtasks

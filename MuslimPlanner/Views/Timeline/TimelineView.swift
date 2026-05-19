@@ -43,7 +43,7 @@ struct TimelineView: View {
 
     private func taskHeight(_ task: PlanTask) -> CGFloat {
         let mins = CGFloat(task.durationMinutes ?? 30)
-        return max(40, mins / 60 * kHourHeight)
+        return max(44, mins / 60 * kHourHeight)
     }
 
     private var canvasHeight: CGFloat {
@@ -298,55 +298,49 @@ struct TimedTaskCard: View {
     let onTap: () -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            Rectangle()
-                .fill(accentColor)
+        HStack(alignment: .center, spacing: 0) {
+            // Left color bar
+            RoundedRectangle(cornerRadius: 2)
+                .fill(task.color)
                 .frame(width: 4)
 
-            VStack(alignment: .leading, spacing: 3) {
+            // Title + time range
+            VStack(alignment: .leading, spacing: 2) {
                 Text(task.title)
-                    .font(.caption.bold())
+                    .font(.caption.weight(.semibold))
                     .lineLimit(2)
-                    .foregroundStyle(.primary)
+                    .strikethrough(task.isCompleted)
+                    .foregroundStyle(task.isCompleted ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
 
                 if let start = task.startTime {
-                    let dur    = Double((task.durationMinutes ?? 30) * 60)
-                    let end    = start.addingTimeInterval(dur)
+                    let end = start.addingTimeInterval(Double((task.durationMinutes ?? 30) * 60))
                     Text("\(start.formatted(.dateTime.hour().minute())) – \(end.formatted(.dateTime.hour().minute()))")
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
-                }
-
-                if let template = task.taskType {
-                    Label(template.name, systemImage: template.symbolName)
-                        .font(.caption2)
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 2)
-                        .background(Color(hex: template.colorHex).opacity(0.15))
-                        .foregroundStyle(Color(hex: template.colorHex))
-                        .clipShape(Capsule())
+                        .foregroundStyle(.tertiary)
                 }
             }
-            .padding(6)
+            .padding(.leading, 8)
+            .padding(.vertical, 6)
 
             Spacer(minLength: 0)
 
-            // Drag handle
-            Image(systemName: "line.3.horizontal")
-                .font(.caption)
-                .foregroundStyle(.tertiary)
-                .padding(.trailing, 6)
-                .padding(.top, 6)
+            // Completion checkbox
+            Button {
+                task.isCompleted.toggle()
+            } label: {
+                Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 18))
+                    .foregroundStyle(task.isCompleted ? AnyShapeStyle(Color.green) : AnyShapeStyle(Color.secondary.opacity(0.4)))
+            }
+            .buttonStyle(.plain)
+            .padding(.trailing, 10)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(accentColor.opacity(0.1))
-        .overlay(RoundedRectangle(cornerRadius: 6).stroke(accentColor.opacity(0.3), lineWidth: 1))
-        .clipShape(RoundedRectangle(cornerRadius: 6))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .opacity(task.isCompleted ? 0.55 : 1.0)
+        .background(task.color.opacity(task.isCompleted ? 0.05 : 0.10))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(task.color.opacity(task.isCompleted ? 0.15 : 0.3), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .contentShape(Rectangle())
         .onTapGesture { onTap() }
-    }
-
-    private var accentColor: Color {
-        Color(hex: task.taskType?.colorHex ?? "007AFF")
     }
 }

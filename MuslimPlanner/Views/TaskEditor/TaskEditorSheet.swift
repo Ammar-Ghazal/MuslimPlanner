@@ -11,18 +11,14 @@ struct TaskEditorSheet: View {
     @Environment(\.modelContext) private var ctx
     @Environment(\.dismiss) private var dismiss
 
-    @State private var title           = ""
-    @State private var startTime       = Date()
-    @State private var durationMins    = 30
-    @State private var isCompleted     = false
+    @State private var title = ""
+    @State private var startTime = Date()
+    @State private var durationMins = 30
+    @State private var isCompleted = false
     @State private var linkedTemplate: TaskTemplate? = nil
-    @State private var checklistItems: [String] = []
-    @State private var completedItems: Set<String> = []
-    @State private var newItemText     = ""
+    @State private var showTypePicker = false
 
     private var isEditing: Bool { task != nil }
-    private var isLinkedToType: Bool { linkedTemplate != nil }
-    private var isPrayer: Bool { task?.prayerBlock != nil && linkedTemplate == nil }
 
     var body: some View {
         NavigationStack {
@@ -39,57 +35,30 @@ struct TaskEditorSheet: View {
                         .foregroundStyle(.secondary)
                 }
 
-                if !isPrayer {
-                    Section {
-                        if isLinkedToType {
-                            Label("Saved as \"\(linkedTemplate!.name)\"", systemImage: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
-                        } else {
-                            Button {
-                                saveAsTaskType()
-                            } label: {
-                                Label("Save as Task Type", systemImage: "bookmark")
-                            }
-                            .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
-                        }
-                    }
-
-                    Section {
-                        ForEach(checklistItems, id: \.self) { item in
-                            HStack(spacing: 12) {
-                                Image(systemName: completedItems.contains(item) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(completedItems.contains(item) ? .green : .secondary)
-                                Text(item)
-                                    .strikethrough(completedItems.contains(item))
-                                    .foregroundStyle(completedItems.contains(item) ? .secondary : .primary)
+                // Task type — shows current type and lets the user change it
+                Section("Task Type") {
+                    if let t = linkedTemplate {
+                        Button { showTypePicker = true } label: {
+                            HStack(spacing: 10) {
+                                Image(systemName: t.symbolName)
+                                    .foregroundStyle(Color(hex: t.colorHex))
+                                    .frame(width: 24)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(t.displayTitle).foregroundStyle(.primary)
+                                    if t.parent != nil {
+                                        Text(t.path).font(.caption).foregroundStyle(.secondary)
+                                    }
+                                }
                                 Spacer()
-                                Button(role: .destructive) {
-                                    checklistItems.removeAll { $0 == item }
-                                    completedItems.remove(item)
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                }
-                                .font(.system(size: 16))
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                if completedItems.contains(item) {
-                                    completedItems.remove(item)
-                                } else {
-                                    completedItems.insert(item)
-                                }
+                                Image(systemName: "chevron.right")
+                                    .font(.caption2).foregroundStyle(.tertiary)
                             }
                         }
-                        HStack {
-                            TextField("Add checklist item", text: $newItemText)
-                            Button(action: addChecklistItem) {
-                                Image(systemName: "plus.circle.fill")
-                                    .foregroundStyle(.blue)
-                            }
-                            .disabled(newItemText.trimmingCharacters(in: .whitespaces).isEmpty)
+                    } else {
+                        Button { showTypePicker = true } label: {
+                            Label("Set Task Type", systemImage: "tag")
+                                .foregroundStyle(.blue)
                         }
-                    } header: {
-                        Text("Checklist")
                     }
                 }
 
@@ -99,7 +68,7 @@ struct TaskEditorSheet: View {
                     }
                     Section {
                         Button("Delete Task", role: .destructive) {
-                            if let t = task { ctx.delete(t) }
+                            if let t = task { ctx.delete(t); try? ctx.save() }
                             dismiss()
                         }
                     }
@@ -117,30 +86,32 @@ struct TaskEditorSheet: View {
                 }
             }
             .onAppear { populate() }
+            // Type picker: a simple flat list of all templates (sheet-within-sheet is fine here
+            // since it's just a list — no further navigation required)
+            .sheet(isPresented: $showTypePicker) {
+                TemplateTreePickerSheet { chosen in
+                    linkedTemplate = chosen
+                    title = chosen.displayTitle
+                    showTypePicker = false
+                }
+            }
         }
     }
 
-    private func addChecklistItem() {
-        let item = newItemText.trimmingCharacters(in: .whitespaces)
-        guard !item.isEmpty else { return }
-        checklistItems.append(item)
-        newItemText = ""
-    }
+    // MARK: - Helpers
 
     private func populate() {
         if let t = task {
-            title           = t.title
-            startTime       = t.startTime ?? defaultStartTime()
-            durationMins    = t.durationMinutes ?? 30
-            isCompleted     = t.isCompleted
-            linkedTemplate  = t.taskType
-            checklistItems  = t.checklistItems
-            completedItems  = Set(t.completedItemNames)
+            title = t.title
+            startTime = t.startTime ?? defaultStartTime()
+            durationMins = t.durationMinutes ?? 30
+            isCompleted = t.isCompleted
+            linkedTemplate = t.taskType
         } else if let p = prefill {
-            title           = p.path
-            durationMins    = p.durationMinutes
-            startTime       = defaultStartTime()
-            linkedTemplate  = p
+            title = p.displayTitle
+            durationMins = p.durationMinutes
+            linkedTemplate = p
+            startTime = defaultStartTime()
         } else {
             startTime = defaultStartTime()
         }
@@ -150,20 +121,10 @@ struct TaskEditorSheet: View {
         let cal = Calendar.current
         let now = Date()
         return cal.date(
-            bySettingHour:   cal.component(.hour,   from: now),
-            minute:          cal.component(.minute, from: now),
-            second: 0,
-            of: date
+            bySettingHour: cal.component(.hour, from: now),
+            minute: cal.component(.minute, from: now),
+            second: 0, of: date
         ) ?? date
-    }
-
-    private func saveAsTaskType() {
-        let cleanTitle = title.trimmingCharacters(in: .whitespaces)
-        guard !cleanTitle.isEmpty else { return }
-        let template = TaskTemplate(name: cleanTitle, durationMinutes: durationMins)
-        ctx.insert(template)
-        linkedTemplate = template
-        task?.taskType = template
     }
 
     private func prayerBlock(for time: Date) -> String {
@@ -181,37 +142,121 @@ struct TaskEditorSheet: View {
         let cal = Calendar.current
         let base = cal.startOfDay(for: date)
         let computedStart = cal.date(
-            bySettingHour:   cal.component(.hour,   from: startTime),
-            minute:          cal.component(.minute, from: startTime),
-            second: 0,
-            of: base
+            bySettingHour: cal.component(.hour, from: startTime),
+            minute: cal.component(.minute, from: startTime),
+            second: 0, of: base
         ) ?? base
 
         let block = prayerBlock(for: computedStart)
 
         if let t = task {
-            t.title           = cleanTitle
-            t.startTime       = computedStart
+            t.title = cleanTitle
+            t.startTime = computedStart
             t.durationMinutes = durationMins
-            t.prayerBlock     = block
-            t.isCompleted     = isCompleted
-            t.taskType        = linkedTemplate
-            t.checklistItems  = checklistItems
-            t.completedItemNames = Array(completedItems).sorted()
+            t.prayerBlock = block
+            t.isCompleted = isCompleted
+            t.taskType = linkedTemplate
         } else {
             let newTask = PlanTask(
-                title:           cleanTitle,
-                date:            base,
-                prayerBlock:     block,
-                startTime:       computedStart,
+                title: cleanTitle,
+                date: base,
+                prayerBlock: block,
+                startTime: computedStart,
                 durationMinutes: durationMins
             )
             newTask.taskType = linkedTemplate
-            newTask.checklistItems = checklistItems
-            newTask.completedItemNames = Array(completedItems).sorted()
             ctx.insert(newTask)
         }
+        try? ctx.save()
         onSave?()
         dismiss()
+    }
+}
+
+// MARK: - Template tree picker (for "Change Type" inside the editor)
+// Shows the full template tree with NavigationLink drill-down.
+// Lives here so it can call back into TaskEditorSheet without circular deps.
+
+private struct TemplateTreePickerSheet: View {
+    let onPick: (TaskTemplate) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @Query(sort: \TaskTemplate.name) private var allTemplates: [TaskTemplate]
+
+    private var rootTemplates: [TaskTemplate] { allTemplates.filter(\.isRoot) }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if rootTemplates.isEmpty {
+                    ContentUnavailableView(
+                        "No Task Types",
+                        systemImage: "list.bullet.rectangle",
+                        description: Text("Add task types in Settings → Task Types.")
+                    )
+                } else {
+                    ForEach(rootTemplates) { template in
+                        if template.subtasks.isEmpty {
+                            Button { onPick(template); dismiss() } label: { templateRow(template) }
+                        } else {
+                            NavigationLink {
+                                subtaskPicker(for: template)
+                            } label: {
+                                templateRow(template)
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Select Type")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func subtaskPicker(for parent: TaskTemplate) -> some View {
+        List {
+            Section {
+                ForEach(parent.sortedSubtasks) { sub in
+                    Button { onPick(sub); dismiss() } label: { templateRow(sub) }
+                }
+            }
+            Section {
+                Button { onPick(parent); dismiss() } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: parent.symbolName)
+                            .foregroundStyle(Color(hex: parent.colorHex).opacity(0.5))
+                            .frame(width: 24)
+                        Text("No subtask – just \(parent.name)").foregroundStyle(.secondary)
+                        Spacer()
+                        Text("\(parent.durationMinutes)m").font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        .navigationTitle(parent.name)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    @ViewBuilder
+    private func templateRow(_ template: TaskTemplate) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: template.symbolName)
+                .foregroundStyle(Color(hex: template.colorHex))
+                .frame(width: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(template.displayTitle).foregroundStyle(.primary)
+                if template.parent != nil {
+                    Text(template.path).font(.caption).foregroundStyle(.secondary)
+                }
+            }
+            Spacer()
+            Text("\(template.durationMinutes)m").font(.caption).foregroundStyle(.secondary)
+        }
     }
 }

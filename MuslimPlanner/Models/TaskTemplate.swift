@@ -6,12 +6,16 @@ final class TaskTemplate {
     var name: String
     var durationMinutes: Int
     var sortOrder: Int
-    var colorHex: String = "007AFF"
-    var symbolName: String = "circle.fill"
-    @Relationship(deleteRule: .cascade, inverse: \TaskTemplate.parent) var subtasks: [TaskTemplate]
+    var colorHex: String
+    var symbolName: String
+
+    // Self-referential: no inverse annotation — SwiftData's auto-management is unreliable
+    // for self-referential relationships. We set parent manually in all mutations.
+    @Relationship(deleteRule: .cascade) var subtasks: [TaskTemplate] = []
     var parent: TaskTemplate?
 
-    init(name: String, durationMinutes: Int = 30, sortOrder: Int = 0, colorHex: String = "007AFF", symbolName: String = "circle.fill") {
+    init(name: String, durationMinutes: Int = 30, sortOrder: Int = 0,
+         colorHex: String = "007AFF", symbolName: String = "circle.fill") {
         self.name = name
         self.durationMinutes = durationMinutes
         self.sortOrder = sortOrder
@@ -26,11 +30,7 @@ final class TaskTemplate {
         subtasks.sorted { $0.sortOrder < $1.sortOrder }
     }
 
-    var totalDurationMinutes: Int {
-        durationMinutes + subtasks.reduce(0) { $0 + $1.totalDurationMinutes }
-    }
-
-    // Full display path from root, e.g. "Course Work → Assignment"
+    // Hierarchy path root → child: "Course Work → Assignment"
     var path: String {
         var parts: [String] = [name]
         var current = parent
@@ -39,5 +39,16 @@ final class TaskTemplate {
             current = p.parent
         }
         return parts.joined(separator: " → ")
+    }
+
+    // Task title for the timeline: child first: "Assignment - Course Work"
+    var displayTitle: String {
+        var parts: [String] = [name]
+        var current = parent
+        while let p = current {
+            parts.append(p.name)
+            current = p.parent
+        }
+        return parts.joined(separator: " - ")
     }
 }

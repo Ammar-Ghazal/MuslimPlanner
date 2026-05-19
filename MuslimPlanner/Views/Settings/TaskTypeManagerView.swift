@@ -2,46 +2,44 @@ import SwiftUI
 import SwiftData
 
 struct TaskTypeManagerView: View {
-    @Query(sort: \TaskTemplate.name) private var templates: [TaskTemplate]
+    @Query(sort: \TaskTemplate.name) private var allTemplates: [TaskTemplate]
     @Environment(\.modelContext) private var ctx
 
-    @State private var editingTemplate: TaskTemplate?
+    private var roots: [TaskTemplate] { allTemplates.filter(\.isRoot) }
+
     @State private var showEditor = false
+    @State private var editing: TaskTemplate? = nil
 
     var body: some View {
         List {
-            ForEach(templates) { template in
-                Button {
-                    editingTemplate = template
-                    showEditor = true
-                } label: {
-                    VStack(alignment: .leading, spacing: 3) {
-                        HStack {
-                            Text(template.name)
-                                .foregroundStyle(.primary)
-                            Spacer()
-                            Text("\(template.durationMinutes)m")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        if !template.subtasks.isEmpty {
-                            Text(template.sortedSubtasks.map(\.name).joined(separator: " → "))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                                .lineLimit(1)
+            if roots.isEmpty {
+                ContentUnavailableView(
+                    "No Task Types",
+                    systemImage: "list.bullet.rectangle",
+                    description: Text("Tap + to create your first task type.")
+                )
+            } else {
+                ForEach(roots) { root in
+                    Section {
+                        // Root row
+                        row(root, isSubtask: false)
+                        // Subtask rows, visually indented
+                        ForEach(root.sortedSubtasks) { sub in
+                            row(sub, isSubtask: true)
                         }
                     }
                 }
-            }
-            .onDelete { idxs in
-                for i in idxs { ctx.delete(templates[i]) }
+                .onDelete { idxs in
+                    for i in idxs { ctx.delete(roots[i]) }
+                    try? ctx.save()
+                }
             }
         }
         .navigationTitle("Task Types")
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    editingTemplate = nil
+                    editing = nil
                     showEditor = true
                 } label: {
                     Image(systemName: "plus")
@@ -52,8 +50,41 @@ struct TaskTypeManagerView: View {
             }
         }
         .sheet(isPresented: $showEditor) {
-            TaskTemplateEditorSheet(template: editingTemplate)
-                .onDisappear { editingTemplate = nil }
+            TaskTemplateEditorSheet(template: editing)
+                .onDisappear { editing = nil }
+        }
+    }
+
+    @ViewBuilder
+    private func row(_ t: TaskTemplate, isSubtask: Bool) -> some View {
+        Button {
+            editing = t
+            showEditor = true
+        } label: {
+            HStack(spacing: 8) {
+                if isSubtask {
+                    Image(systemName: "arrow.turn.down.right")
+                        .font(.caption2)
+                        .foregroundStyle(.tertiary)
+                        .frame(width: 14)
+                }
+                Image(systemName: t.symbolName)
+                    .foregroundStyle(Color(hex: t.colorHex))
+                    .frame(width: 24)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(t.name).foregroundStyle(.primary)
+                    if !t.subtasks.isEmpty {
+                        Text(t.sortedSubtasks.map(\.name).joined(separator: " · "))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                }
+                Spacer()
+                Text("\(t.durationMinutes)m")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }
