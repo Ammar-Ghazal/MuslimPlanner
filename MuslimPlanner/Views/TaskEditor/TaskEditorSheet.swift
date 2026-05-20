@@ -354,64 +354,156 @@ private struct IconPickerSheet: View {
 
     private let categories: [(name: String, icons: [String])] = [
         ("General", [
-            "circle.fill", "square.fill", "star.fill", "heart.fill",
+            "circle.fill", "square.fill", "rectangle.fill", "star.fill", "heart.fill",
             "bookmark.fill", "flag.fill", "tag.fill", "bell.fill",
             "checkmark.circle.fill", "exclamationmark.circle.fill",
-            "info.circle.fill", "questionmark.circle.fill"
+            "info.circle.fill", "questionmark.circle.fill", "xmark.circle.fill",
+            "plus.circle.fill", "minus.circle.fill", "chevron.right.circle.fill",
+            "diamond.fill", "hexagon.fill", "triangle.fill", "leaf.fill"
         ]),
         ("Time & Planning", [
-            "clock.fill", "calendar", "alarm.fill", "hourglass",
-            "timer", "chart.bar.fill", "list.bullet", "checklist",
-            "tray.fill", "archivebox.fill", "note.text", "arrow.clockwise"
+            "clock.fill", "calendar", "calendar.badge.plus", "alarm.fill", "hourglass",
+            "hourglass.bottomhalf.filled", "timer", "stopwatch.fill", "chart.bar.fill",
+            "list.bullet", "checklist", "tray.fill", "archivebox.fill", "note.text",
+            "arrow.clockwise", "arrow.counterclockwise", "calendar.badge.clock",
+            "clock.badge", "calendar.circle.fill", "clock.circle.fill"
         ]),
         ("Work & Study", [
-            "briefcase.fill", "book.fill", "pencil", "pencil.circle.fill",
-            "doc.fill", "folder.fill", "graduationcap.fill", "lightbulb.fill",
-            "brain", "magnifyingglass", "wrench.fill", "hammer.fill"
+            "briefcase.fill", "briefcase.circle.fill", "book.fill", "books.vertical.fill",
+            "pencil", "pencil.circle.fill", "doc.fill", "doc.badge.ellipsis",
+            "folder.fill", "folder.badge.plus", "graduationcap.fill", "lightbulb.fill",
+            "lightbulb.circle.fill", "brain", "magnifyingglass", "wrench.fill",
+            "hammer.fill", "gearshape.fill", "hammer.circle.fill", "screwdriver.fill"
         ]),
         ("Prayer & Wellness", [
-            "hands.sparkles.fill", "figure.stand", "moon.fill", "sun.max.fill",
-            "sparkles", "drop.fill", "leaf.fill", "wind",
-            "figure.mind.and.body", "cross.case.fill", "lungs.fill"
+            "hands.sparkles.fill", "hand.raised.fill", "figure.stand", "moon.fill",
+            "sun.max.fill", "sun.max.circle.fill", "sparkles", "drop.fill",
+            "leaf.fill", "wind", "figure.mind.and.body", "cross.case.fill", "lungs.fill",
+            "rosette", "hand.thumbsup.fill", "figure.yoga"
         ]),
         ("Health & Fitness", [
-            "dumbbell.fill", "figure.walk", "figure.run",
-            "heart.fill", "pills.fill", "bed.double.fill", "shower.fill",
-            "bicycle", "sportscourt.fill", "trophy.fill"
+            "dumbbell.fill", "figure.walk", "figure.walk.circle.fill", "figure.run",
+            "figure.run.circle.fill", "heart.fill", "heart.circle.fill", "pills.fill",
+            "bed.double.fill", "shower.fill", "bicycle", "bicycle.circle.fill",
+            "sportscourt.fill", "trophy.fill", "medal.fill", "figure.strengthtraining.traditional",
+            "figure.yoga", "stethoscope", "apple.logo", "drop.circle.fill"
         ]),
         ("Food & Home", [
-            "fork.knife", "cup.and.saucer.fill", "carrot.fill",
-            "house.fill", "building.fill", "cart.fill", "bag.fill",
-            "trash", "sofa.fill"
+            "fork.knife", "cup.and.saucer.fill", "carrot.fill", "leaf.fill",
+            "house.fill", "house.circle.fill", "building.fill", "building.2.fill",
+            "cart.fill", "cart.circle.fill", "bag.fill", "basket.fill",
+            "trash", "trash.circle.fill", "sofa.fill", "bed.double.fill",
+            "refrigerator.fill", "microwave.fill", "flame.fill", "fork.knife"
         ]),
         ("People & Social", [
-            "person.fill", "person.2.fill", "phone.fill", "message.fill",
-            "envelope.fill", "video.fill", "bubble.left.fill",
-            "hand.wave.fill", "gift.fill"
+            "person.fill", "person.circle.fill", "person.2.fill", "person.2.circle.fill",
+            "person.3.fill", "phone.fill", "phone.circle.fill", "message.fill",
+            "message.circle.fill", "envelope.fill", "envelope.circle.fill", "video.fill",
+            "video.circle.fill", "bubble.left.fill", "bubble.right.fill", "hand.wave.fill",
+            "hand.thumbsup.fill", "hand.thumbsdown.fill", "gift.fill", "person.badge.plus.fill"
         ]),
         ("Entertainment", [
-            "music.note", "film.fill", "gamecontroller.fill", "tv.fill",
-            "headphones", "mic.fill", "photo.fill", "camera.fill",
-            "paintbrush.fill", "book.closed.fill", "theatermasks.fill"
+            "music.note", "music.note.list", "music.quarternote.3", "film.fill",
+            "film.circle.fill", "gamecontroller.fill", "gamecontroller.circle.fill",
+            "tv.fill", "tv.circle.fill", "headphones", "headphones.circle.fill", "mic.fill",
+            "mic.circle.fill", "photo.fill", "photo.circle.fill", "camera.fill",
+            "camera.circle.fill", "paintbrush.fill", "paintbrush.circle.fill",
+            "book.closed.fill", "theatermasks.fill"
         ]),
         ("Transport & Travel", [
-            "car.fill", "airplane", "tram.fill", "bus.fill",
-            "ferry.fill", "map.fill", "location.fill", "globe"
+            "car.fill", "car.circle.fill", "car.2.fill", "airplane", "airplane.circle.fill",
+            "tram.fill", "bus.fill", "bus.circle.fill", "train.side.fill",
+            "ferry.fill", "map.fill", "map.circle.fill", "location.fill",
+            "location.circle.fill", "globe", "globe.americas.fill", "compass.fill",
+            "signpost.right.fill", "bicycle.fill", "scooter.fill"
         ]),
-        ("Finance", [
+        ("Finance & Shopping", [
             "dollarsign.circle.fill", "banknote.fill", "creditcard.fill",
-            "chart.line.uptrend.xyaxis", "chart.pie.fill", "percent"
+            "creditcard.circle.fill", "chart.line.uptrend.xyaxis", "chart.pie.fill",
+            "chart.bar.fill", "percent", "yensign.circle.fill", "sterlingsign.circle.fill",
+            "eurosign.circle.fill", "indianrupeesign.circle.fill", "bitcoinsign.circle.fill",
+            "wallet.pass.fill", "wallet.bifold.fill", "bag.badge.plus", "tag.circle.fill"
+        ]),
+        ("Technology & Internet", [
+            "laptopcomputer", "laptopcomputer.and.iphone", "desktopcomputer",
+            "iphone", "ipad", "apple.logo", "globe", "wifi", "wifi.circle.fill",
+            "antenna.radiowaves.left.and.right", "server.rack", "externaldrive.fill",
+            "opticaldiscdrive.fill", "xmark.icloud.fill"
+        ]),
+        ("Nature & Outdoor", [
+            "tree.fill", "mountain.2.fill", "drop.fill", "cloud.fill", "cloud.rain.fill",
+            "cloud.snow.fill", "wind.snow", "sun.max.fill", "moon.fill", "star.fill",
+            "bolt.fill", "drop.circle.fill", "snowflake", "flame.fill", "tornado"
         ])
+    ]
+
+    private let keywordAliases: [String: [String]] = [
+        "gym": ["dumbbell.fill", "figure.strengthtraining.traditional", "figure.walk", "figure.run", "sportscourt.fill", "trophy.fill"],
+        "exercise": ["dumbbell.fill", "figure.walk", "figure.run", "bicycle.fill", "figure.yoga", "sportscourt.fill"],
+        "fitness": ["dumbbell.fill", "figure.strengthtraining.traditional", "figure.walk", "figure.run", "bicycle.fill", "heart.fill"],
+        "sport": ["sportscourt.fill", "trophy.fill", "medal.fill", "bicycle.fill", "figure.run"],
+        "work": ["briefcase.fill", "doc.fill", "folder.fill", "wrench.fill", "gearshape.fill"],
+        "study": ["book.fill", "pencil", "graduationcap.fill", "lightbulb.fill", "brain"],
+        "food": ["fork.knife", "cup.and.saucer.fill", "carrot.fill", "apple.logo", "refrigerator.fill"],
+        "eat": ["fork.knife", "cup.and.saucer.fill", "carrot.fill"],
+        "cook": ["flame.fill", "fork.knife", "microwave.fill", "pot.2"],
+        "sleep": ["bed.double.fill", "moon.fill"],
+        "rest": ["bed.double.fill", "moon.fill", "figure.mind.and.body"],
+        "prayer": ["hands.sparkles.fill", "hand.raised.fill", "cross.case.fill", "rosette"],
+        "meeting": ["person.2.fill", "phone.fill", "video.fill", "message.fill"],
+        "talk": ["message.fill", "bubble.left.fill", "phone.fill", "video.fill"],
+        "chat": ["message.fill", "bubble.left.fill", "bubble.right.fill"],
+        "music": ["music.note", "music.note.list", "headphones"],
+        "movie": ["film.fill", "tv.fill", "popcorn.fill"],
+        "game": ["gamecontroller.fill"],
+        "travel": ["airplane", "map.fill", "location.fill", "car.fill", "bus.fill"],
+        "trip": ["airplane", "map.fill", "car.fill"],
+        "money": ["dollarsign.circle.fill", "banknote.fill", "creditcard.fill", "wallet.bifold.fill"],
+        "shopping": ["bag.fill", "basket.fill", "cart.fill", "tag.circle.fill"],
+        "buy": ["bag.fill", "basket.fill", "cart.fill"],
+        "sell": ["tag.circle.fill", "dollarsign.circle.fill"],
+        "task": ["checklist", "list.bullet", "checkmark.circle.fill"],
+        "todo": ["checklist", "list.bullet"],
+        "done": ["checkmark.circle.fill"],
+        "medical": ["stethoscope", "pills.fill", "heart.fill", "cross.case.fill"],
+        "health": ["heart.fill", "stethoscope", "pills.fill", "apple.logo"],
+        "clean": ["trash", "sparkles", "drop.circle.fill"],
+        "important": ["flag.fill", "star.fill", "exclamationmark.circle.fill"],
+        "urgent": ["exclamationmark.circle.fill", "flag.fill"],
+        "question": ["questionmark.circle.fill"],
+        "idea": ["lightbulb.fill", "sparkles"],
+        "love": ["heart.fill"],
+        "favorite": ["star.fill", "heart.fill"],
+        "tech": ["laptopcomputer", "iphone", "gearshape.fill"],
+        "computer": ["laptopcomputer", "desktopcomputer"],
+        "phone": ["iphone", "phone.fill"],
+        "internet": ["globe", "wifi", "antenna.radiowaves.left.and.right"],
+        "coding": ["wrench.fill", "gearshape.fill", "book.fill"],
+        "art": ["paintbrush.fill", "photo.fill"],
+        "create": ["paintbrush.fill", "pencil", "lightbulb.fill"],
+        "weather": ["cloud.fill", "sun.max.fill", "moon.fill", "wind"],
+        "rain": ["cloud.rain.fill"],
+        "snow": ["cloud.snow.fill", "snowflake"],
+        "nature": ["tree.fill", "mountain.2.fill", "leaf.fill", "drop.circle.fill"],
+        "plant": ["tree.fill", "leaf.fill", "carrot.fill"],
+        "birthday": ["gift.fill", "party.popper"],
+        "celebration": ["gift.fill", "sparkles", "party.popper"]
     ]
 
     private var visibleCategories: [(name: String, icons: [String])] {
         guard !searchText.isEmpty else { return categories }
-        let query = searchText.lowercased()
+        let query = searchText.lowercased().trimmingCharacters(in: .whitespaces)
+
+        if let aliasedIcons = keywordAliases[query], !aliasedIcons.isEmpty {
+            return [("Results", aliasedIcons)]
+        }
+
         return categories.compactMap { cat in
             if cat.name.lowercased().contains(query) { return cat }
             let hits = cat.icons.filter {
                 $0.replacingOccurrences(of: ".", with: " ")
                   .replacingOccurrences(of: "fill", with: "")
+                  .lowercased()
                   .contains(query)
             }
             return hits.isEmpty ? nil : (name: cat.name, icons: hits)
@@ -420,39 +512,68 @@ private struct IconPickerSheet: View {
 
     var body: some View {
         NavigationStack {
-            List {
+            VStack(spacing: 0) {
+                SearchBar(text: $searchText)
+
                 if visibleCategories.isEmpty {
-                    ContentUnavailableView.search(text: searchText)
+                    VStack(spacing: 12) {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 32))
+                            .foregroundStyle(.secondary)
+                        Text("No icons found")
+                            .font(.headline)
+                        Text("Try searching with keywords like 'gym', 'exercise', 'travel', 'cooking'")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color(uiColor: .systemBackground))
                 } else {
-                    ForEach(visibleCategories, id: \.name) { category in
-                        Section(category.name) {
-                            ForEach(category.icons, id: \.self) { icon in
-                                Button {
-                                    selectedIcon = icon
-                                    dismiss()
-                                } label: {
-                                    HStack(spacing: 12) {
-                                        Image(systemName: icon)
-                                            .font(.system(size: 20))
-                                            .foregroundStyle(selectedIcon == icon ? Color(hex: colorHex) : .primary)
-                                            .frame(width: 28)
-                                        Text(iconLabel(icon))
-                                            .foregroundStyle(.primary)
-                                        Spacer()
-                                        if selectedIcon == icon {
-                                            Image(systemName: "checkmark")
-                                                .foregroundStyle(Color(hex: colorHex))
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 20) {
+                            ForEach(visibleCategories, id: \.name) { category in
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text(category.name)
+                                        .font(.headline)
+                                        .foregroundStyle(.primary)
+                                        .padding(.horizontal, 16)
+
+                                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 5), spacing: 12) {
+                                        ForEach(category.icons, id: \.self) { icon in
+                                            Button(action: {
+                                                selectedIcon = icon
+                                                dismiss()
+                                            }) {
+                                                ZStack {
+                                                    if selectedIcon == icon {
+                                                        Circle()
+                                                            .fill(Color(hex: colorHex).opacity(0.2))
+                                                    }
+
+                                                    Image(systemName: icon)
+                                                        .font(.system(size: 18))
+                                                        .foregroundStyle(selectedIcon == icon ? Color(hex: colorHex) : .primary)
+                                                }
+                                                .frame(height: 50)
+                                                .contentShape(Circle())
+                                            }
                                         }
                                     }
+                                    .padding(.horizontal, 16)
                                 }
                             }
                         }
+                        .padding(.vertical, 16)
                     }
+                    .frame(maxHeight: .infinity)
+                    .scrollDismissesKeyboard(.immediately)
                 }
             }
+            .frame(maxHeight: .infinity, alignment: .top)
             .navigationTitle("Choose Icon")
             .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $searchText, prompt: "Search icons")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button { dismiss() } label: {
@@ -463,13 +584,27 @@ private struct IconPickerSheet: View {
             }
         }
     }
+}
 
-    private func iconLabel(_ symbol: String) -> String {
-        symbol
-            .replacingOccurrences(of: ".fill", with: "")
-            .replacingOccurrences(of: ".", with: " ")
-            .split(separator: " ")
-            .map { $0.capitalized }
-            .joined(separator: " ")
+private struct SearchBar: View {
+    @Binding var text: String
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: "magnifyingglass")
+                .foregroundStyle(.secondary)
+
+            TextField("Search icons or keywords", text: $text)
+                .textFieldStyle(.roundedBorder)
+
+            if !text.isEmpty {
+                Button(action: { text = "" }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .padding(12)
+        .background(Color(uiColor: .secondarySystemBackground))
     }
 }
