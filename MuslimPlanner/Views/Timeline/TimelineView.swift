@@ -2,10 +2,12 @@ import SwiftUI
 import SwiftData
 
 // MARK: - Layout constants
-private let kHourHeight: CGFloat = 64
-private let kRulerWidth: CGFloat = 48
-private let kTaskInset: CGFloat  = 4
-private let kRightPad: CGFloat   = 16
+private let kHourHeight: CGFloat      = 64
+private let kRulerWidth: CGFloat      = 48
+private let kTaskInset: CGFloat       = 4
+private let kRightPad: CGFloat        = 16
+private let kRevealWidth: CGFloat     = 72
+private let kDeleteThreshold: CGFloat = 120
 
 struct TimelineView: View {
     @ObservedObject var viewModel: DayPlanViewModel
@@ -21,9 +23,14 @@ struct TimelineView: View {
     @State private var showCalendar   = false
     @State private var calendarMonth  = Calendar.current.startOfDay(for: Date())
 
-    // Drag state
+    // Vertical drag state
     @State private var draggingID: PersistentIdentifier? = nil
     @State private var dragOffset: CGFloat = 0
+
+    // Swipe-to-delete state
+    @State private var swipeOffsets: [PersistentIdentifier: CGFloat] = [:]
+    @State private var revealedSwipes: Set<PersistentIdentifier> = []
+    @State private var swipeDragDirections: [PersistentIdentifier: Bool] = [:]
 
     // MARK: - Derived
 
@@ -283,20 +290,59 @@ struct TimelineView: View {
         }
     }
 
-    // MARK: - Task cards with drag
+    // MARK: - Task cards with swipe-to-delete and vertical drag
 
     @ViewBuilder
     private func taskCard(_ task: PlanTask, width: CGFloat) -> some View {
-        let isDragging = draggingID == task.persistentModelID
-        let yBase = yFor(task.startTime!)
-        let yPos  = yBase + (isDragging ? dragOffset : 0)
+        let id         = task.persistentModelID
+        let isDragging = draggingID == id
+        let yBase      = yFor(task.startTime!)
+        let yPos       = yBase + (isDragging ? dragOffset : 0)
+        let swipeX     = swipeOffsets[id] ?? 0
+        let isRevealed = revealedSwipes.contains(id)
+        let cardW      = max(60, width)
+        let h          = taskHeight(task)
 
+        // Red delete background — sits behind the card, revealed as card slides left
+        RoundedRectangle(cornerRadius: 10)
+            .fill(Color.red)
+            .overlay(alignment: .trailing) {
+                Button {
+                    withAnimation(.easeIn(duration: 0.22)) {
+                        swipeOffsets[id] = -(cardW + 20)
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
+                        ctx.delete(task)
+                        try? ctx.save()
+                        swipeOffsets.removeValue(forKey: id)
+                        revealedSwipes.remove(id)
+                    }
+                } label: {
+                    Image(systemName: "trash.fill")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(.white)
+                        .frame(width: kRevealWidth, height: h)
+                }
+                .buttonStyle(.plain)
+            }
+            .frame(width: cardW, height: h)
+            .offset(x: kRulerWidth + kTaskInset, y: yPos)
+            .opacity(swipeX < -6 || isRevealed ? 1 : 0)
+
+        // The sliding card
         TimedTaskCard(task: task) {
-            editingTask = task
-            showEditor  = true
+            if isRevealed {
+                withAnimation(.spring(response: 0.3)) {
+                    swipeOffsets[id] = 0
+                    revealedSwipes.remove(id)
+                }
+            } else {
+                editingTask = task
+                showEditor  = true
+            }
         }
-        .frame(width: max(60, width), height: taskHeight(task))
-        .offset(x: kRulerWidth + kTaskInset, y: yPos)
+        .frame(width: cardW, height: h)
+        .offset(x: kRulerWidth + kTaskInset + swipeX, y: yPos)
         .zIndex(isDragging ? 1 : 0)
         .shadow(
             color: .black.opacity(isDragging ? 0.18 : 0),
@@ -308,13 +354,62 @@ struct TimelineView: View {
         .gesture(
             DragGesture(minimumDistance: 8, coordinateSpace: .global)
                 .onChanged { val in
-                    draggingID = task.persistentModelID
-                    dragOffset = val.translation.height
+                    if swipeDragDirections[id] == nil {
+                        swipeDragDirections[id] = abs(val.translation.width) > abs(val.translation.height)
+                    }
+                    if swipeDragDirections[id] == true {
+                        // Horizontal — only allow left swipe
+                        let base: CGFloat = isRevealed ? -kRevealWidth : 0
+                        swipeOffsets[id] = min(0, base + val.translation.width)
+                    } else if !isRevealed {
+                        // Vertical — reposition in time
+                        draggingID = id
+                        dragOffset = val.translation.height
+                    }
                 }
                 .onEnded { val in
-                    commitDrag(task: task, pixelOffset: val.translation.height)
-                    draggingID = nil
-                    dragOffset = 0
+                    let wasHoriz = swipeDragDirections[id] == true
+                    swipeDragDirections[id] = nil
+
+                    if wasHoriz {
+                        let offset = swipeOffsets[id] ?? 0
+                        if abs(offset) >= kDeleteThreshold {
+                            // Past halfway — delete
+                            withAnimation(.easeIn(duration: 0.22)) {
+                                swipeOffsets[id] = -(cardW + 20)
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
+                                ctx.delete(task)
+                                try? ctx.save()
+                                swipeOffsets.removeValue(forKey: id)
+                                revealedSwipes.remove(id)
+                            }
+                        } else if abs(offset) > 20 {
+                            // Partial swipe — reveal trash button
+                            withAnimation(.spring(response: 0.3)) {
+                                swipeOffsets[id] = -kRevealWidth
+                                revealedSwipes.insert(id)
+                            }
+                        } else {
+                            // Tiny movement — snap back
+                            withAnimation(.spring(response: 0.3)) {
+                                swipeOffsets[id] = 0
+                                revealedSwipes.remove(id)
+                            }
+                        }
+                    } else {
+                        if isRevealed {
+                            // Close reveal on any vertical gesture
+                            withAnimation(.spring(response: 0.3)) {
+                                swipeOffsets[id] = 0
+                                revealedSwipes.remove(id)
+                            }
+                        } else {
+                            commitDrag(task: task, pixelOffset: val.translation.height)
+                        }
+                        draggingID = nil
+                        dragOffset = 0
+                    }
                 }
         )
     }
