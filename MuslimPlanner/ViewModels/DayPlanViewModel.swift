@@ -5,6 +5,7 @@ import Combine
 final class DayPlanViewModel: ObservableObject {
     @Published var selectedDate: Date = Calendar.current.startOfDay(for: Date())
     @Published var prayerTimes: [PrayerTime] = []
+    @Published var rawPrayerTimes: [PrayerTime] = []
     @Published var isLoadingPrayers = false
     @Published var prayerError: String?
 
@@ -28,12 +29,14 @@ final class DayPlanViewModel: ObservableObject {
         defer { isLoadingPrayers = false }
 
         do {
-            prayerTimes = try await prayerService.fetchPrayerTimes(
+            let raw = try await prayerService.fetchPrayerTimes(
                 latitude: lat,
                 longitude: lon,
                 method: settings.calculationMethod,
                 date: selectedDate
             )
+            rawPrayerTimes = raw
+            prayerTimes = applyAdjustments(to: raw, settings: settings, date: selectedDate)
             saveLocation(to: settings)
             await NotificationService.shared.schedulePrayerReminders(
                 prayerTimes: prayerTimes,
@@ -41,6 +44,33 @@ final class DayPlanViewModel: ObservableObject {
             )
         } catch {
             prayerError = "Could not load prayer times. Check your connection."
+        }
+    }
+
+    func reapplyAdjustments(settings: AppSettings) {
+        guard !rawPrayerTimes.isEmpty else { return }
+        prayerTimes = applyAdjustments(to: rawPrayerTimes, settings: settings, date: selectedDate)
+        Task {
+            await NotificationService.shared.schedulePrayerReminders(
+                prayerTimes: prayerTimes,
+                offsetMinutes: settings.notificationOffsetMinutes
+            )
+        }
+    }
+
+    private func applyAdjustments(to prayers: [PrayerTime], settings: AppSettings, date: Date) -> [PrayerTime] {
+        let cal = Calendar.current
+        let base = cal.startOfDay(for: date)
+        return prayers.map { prayer in
+            let fixedMins = settings.fixedMinutes(for: prayer.name)
+            let offsetMins = settings.offset(for: prayer.name)
+            let newTime: Date
+            if fixedMins >= 0 {
+                newTime = base.addingTimeInterval(Double(fixedMins) * 60)
+            } else {
+                newTime = prayer.time.addingTimeInterval(Double(offsetMins) * 60)
+            }
+            return PrayerTime(name: prayer.name, time: newTime, icon: prayer.icon, blockName: prayer.blockName)
         }
     }
 

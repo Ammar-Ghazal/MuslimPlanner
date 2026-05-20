@@ -118,8 +118,13 @@ struct TimelineView: View {
             )
         }
         .sheet(isPresented: $showSettings) {
-            SettingsView(settings: settings)
+            SettingsView(settings: settings, rawPrayerTimes: viewModel.rawPrayerTimes)
                 .environmentObject(viewModel.locationService)
+        }
+        .onChange(of: showSettings) { _, isShowing in
+            if !isShowing {
+                viewModel.reapplyAdjustments(settings: settings)
+            }
         }
         .sheet(isPresented: $showCalendar) {
             MiniCalendarSheet(

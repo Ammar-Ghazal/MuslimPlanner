@@ -3,6 +3,7 @@ import UIKit
 
 struct SettingsView: View {
     @Bindable var settings: AppSettings
+    let rawPrayerTimes: [PrayerTime]
     @EnvironmentObject var locationService: LocationService
     @Environment(\.dismiss) private var dismiss
 
@@ -74,6 +75,15 @@ struct SettingsView: View {
                                 UIApplication.shared.open(url)
                             }
                         }
+                    }
+                }
+
+                // Prayer adjustments
+                Section {
+                    NavigationLink {
+                        PrayerAdjustmentsView(settings: settings, rawPrayerTimes: rawPrayerTimes)
+                    } label: {
+                        Label("Prayer Adjustments", systemImage: "clock.badge.checkmark")
                     }
                 }
 

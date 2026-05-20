@@ -12,7 +12,18 @@ struct MuslimPlannerApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [config])
         } catch {
-            fatalError("Failed to create ModelContainer: \(error)")
+            // Schema migration failed (e.g. new columns added to a model).
+            // Wipe the existing store so the app can relaunch cleanly.
+            // Tasks and templates will be lost, but the app won't crash.
+            let storeURL = config.url
+            for suffix in ["", "-wal", "-shm"] {
+                try? FileManager.default.removeItem(at: URL(fileURLWithPath: storeURL.path + suffix))
+            }
+            do {
+                return try ModelContainer(for: schema, configurations: [config])
+            } catch {
+                fatalError("Failed to create ModelContainer: \(error)")
+            }
         }
     }()
 

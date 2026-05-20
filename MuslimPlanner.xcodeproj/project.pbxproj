@@ -20,6 +20,7 @@
 		954801C9BD5EA85EAC65B20E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A82412766D38719C8E6F59 /* MainTabView.swift */; };
 		9DE9509DA201C52F9EF8587C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0C512871DD7A596F089F7 /* SettingsView.swift */; };
 		A3B07BF4AE04E439D6C683C4 /* TaskTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265FF3F38006DD8F325A929C /* TaskTemplate.swift */; };
+		AB1C2D3E4F5A6B7C8D9E0F1A /* PrayerAdjustmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1E2F3A4B5C6D7E8F9A0B1C /* PrayerAdjustmentsView.swift */; };
 		B2DA62F5C28CCE5291B157FB /* TaskTemplateEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */; };
 		C0C474E2384E1D24A7F5C8DE /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20664468F9BBD341BBE40F2E /* LocationService.swift */; };
 		C4EE921562296FA76AE3379E /* PrayerAnchorRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D3AF9382BE82978BE15F06 /* PrayerAnchorRow.swift */; };
@@ -50,6 +51,7 @@
 		9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftData.framework; path = System/Library/Frameworks/SwiftData.framework; sourceTree = SDKROOT; };
 		A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplateEditorSheet.swift; sourceTree = "<group>"; };
 		BC42FD5DCEA1C85F097478F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		CD1E2F3A4B5C6D7E8F9A0B1C /* PrayerAdjustmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerAdjustmentsView.swift; sourceTree = "<group>"; };
 		D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		DD3E4809910FF741EC4D57D4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		E17B12A516D6C6A03AEC3749 /* MuslimPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MuslimPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -121,6 +123,7 @@
 			children = (
 				32F0C512871DD7A596F089F7 /* SettingsView.swift */,
 				6E94CEBE8E20B59E5FDE4E61 /* TaskTypeManagerView.swift */,
+				CD1E2F3A4B5C6D7E8F9A0B1C /* PrayerAdjustmentsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -232,7 +235,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					1788DB3B82B2B758191A729E = {
 						ProvisioningStyle = Automatic;
@@ -279,6 +282,7 @@
 				A3B07BF4AE04E439D6C683C4 /* TaskTemplate.swift in Sources */,
 				B2DA62F5C28CCE5291B157FB /* TaskTemplateEditorSheet.swift in Sources */,
 				EE145E8D6F2EA1703C1F6282 /* TaskTypeManagerView.swift in Sources */,
+				AB1C2D3E4F5A6B7C8D9E0F1A /* PrayerAdjustmentsView.swift in Sources */,
 				DB5F6C2F3A438425A82E254A /* TaskTypePickerSheet.swift in Sources */,
 				39640412088E46C6F8AC0327 /* TimelineView.swift in Sources */,
 			);
@@ -322,8 +326,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 58FZ49BXRF;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -336,6 +342,7 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -350,7 +357,6 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 58FZ49BXRF;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MuslimPlanner/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -402,8 +408,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 58FZ49BXRF;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -423,6 +431,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -437,7 +446,6 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 58FZ49BXRF;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MuslimPlanner/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
