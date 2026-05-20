@@ -12,6 +12,7 @@ final class PlanTask {
     var isCompleted: Bool
     var checklistItems: [String] = []
     var completedItemNames: [String] = []
+    var customIconName: String?
     @Relationship(deleteRule: .nullify) var taskType: TaskTemplate?
 
     init(
@@ -29,6 +30,7 @@ final class PlanTask {
         self.isCompleted = false
         self.checklistItems = []
         self.completedItemNames = []
+        self.customIconName = nil
     }
 
     var color: Color {
@@ -37,7 +39,7 @@ final class PlanTask {
     }
 
     var icon: String {
-        taskType?.symbolName ?? "circle.fill"
+        customIconName ?? taskType?.symbolName ?? "circle.fill"
     }
 
     var completedItems: Set<String> {

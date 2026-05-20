@@ -17,9 +17,10 @@ struct TaskEditorSheet: View {
     @State private var linkedTemplate: TaskTemplate? = nil
 
     @State private var colorHex = "007AFF"
+    @State private var iconName = "circle.fill"
 
     private enum ActiveSheet: Identifiable {
-        case colorPicker, typePicker
+        case colorPicker, typePicker, iconPicker
         var id: Self { self }
     }
     @State private var activeSheet: ActiveSheet?
@@ -63,6 +64,17 @@ struct TaskEditorSheet: View {
                                     Text("Color").foregroundStyle(.primary)
                                     Spacer()
                                     Circle().fill(Color(hex: colorHex)).frame(width: 22, height: 22)
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption2).foregroundStyle(.tertiary)
+                                }
+                            }
+                            Button { activeSheet = .iconPicker } label: {
+                                HStack {
+                                    Text("Icon").foregroundStyle(.primary)
+                                    Spacer()
+                                    Image(systemName: iconName)
+                                        .font(.system(size: 16))
+                                        .foregroundStyle(Color(hex: colorHex))
                                     Image(systemName: "chevron.right")
                                         .font(.caption2).foregroundStyle(.tertiary)
                                 }
@@ -123,6 +135,8 @@ struct TaskEditorSheet: View {
             switch sheet {
             case .colorPicker:
                 ColorPickerSheet(selectedColor: $colorHex)
+            case .iconPicker:
+                IconPickerSheet(selectedIcon: $iconName, colorHex: colorHex)
             case .typePicker:
                 TemplateTreePickerSheet(constrainedTo: linkedTemplate.map(\.root)) { chosen in
                     linkedTemplate = chosen
@@ -141,6 +155,7 @@ struct TaskEditorSheet: View {
             startTime = t.startTime ?? defaultStartTime()
             durationMins = t.durationMinutes ?? 30
             colorHex = t.taskType?.colorHex ?? "007AFF"
+            iconName = t.customIconName ?? t.taskType?.symbolName ?? "circle.fill"
             linkedTemplate = t.taskType
         } else if let p = prefill {
             title = p.displayTitle
@@ -194,6 +209,7 @@ struct TaskEditorSheet: View {
             t.durationMinutes = durationMins
             t.prayerBlock = prayerBlock(for: computedStart)
             t.taskType?.colorHex = colorHex
+            t.customIconName = iconName != (t.taskType?.symbolName ?? "circle.fill") ? iconName : nil
         } else {
             let newTask = PlanTask(
                 title: cleanTitle,
@@ -203,6 +219,7 @@ struct TaskEditorSheet: View {
                 durationMinutes: durationMins
             )
             newTask.taskType = linkedTemplate
+            newTask.customIconName = iconName != (linkedTemplate?.symbolName ?? "circle.fill") ? iconName : nil
             ctx.insert(newTask)
         }
         try? ctx.save()
@@ -323,5 +340,136 @@ private struct TemplateTreePickerSheet: View {
             Spacer()
             Text("\(template.durationMinutes)m").font(.caption).foregroundStyle(.secondary)
         }
+    }
+}
+
+// MARK: - Icon picker sheet
+
+private struct IconPickerSheet: View {
+    @Binding var selectedIcon: String
+    let colorHex: String
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var searchText = ""
+
+    private let categories: [(name: String, icons: [String])] = [
+        ("General", [
+            "circle.fill", "square.fill", "star.fill", "heart.fill",
+            "bookmark.fill", "flag.fill", "tag.fill", "bell.fill",
+            "checkmark.circle.fill", "exclamationmark.circle.fill",
+            "info.circle.fill", "questionmark.circle.fill"
+        ]),
+        ("Time & Planning", [
+            "clock.fill", "calendar", "alarm.fill", "hourglass",
+            "timer", "chart.bar.fill", "list.bullet", "checklist",
+            "tray.fill", "archivebox.fill", "note.text", "arrow.clockwise"
+        ]),
+        ("Work & Study", [
+            "briefcase.fill", "book.fill", "pencil", "pencil.circle.fill",
+            "doc.fill", "folder.fill", "graduationcap.fill", "lightbulb.fill",
+            "brain", "magnifyingglass", "wrench.fill", "hammer.fill"
+        ]),
+        ("Prayer & Wellness", [
+            "hands.sparkles.fill", "figure.stand", "moon.fill", "sun.max.fill",
+            "sparkles", "drop.fill", "leaf.fill", "wind",
+            "figure.mind.and.body", "cross.case.fill", "lungs.fill"
+        ]),
+        ("Health & Fitness", [
+            "dumbbell.fill", "figure.walk", "figure.run",
+            "heart.fill", "pills.fill", "bed.double.fill", "shower.fill",
+            "bicycle", "sportscourt.fill", "trophy.fill"
+        ]),
+        ("Food & Home", [
+            "fork.knife", "cup.and.saucer.fill", "carrot.fill",
+            "house.fill", "building.fill", "cart.fill", "bag.fill",
+            "trash", "sofa.fill"
+        ]),
+        ("People & Social", [
+            "person.fill", "person.2.fill", "phone.fill", "message.fill",
+            "envelope.fill", "video.fill", "bubble.left.fill",
+            "hand.wave.fill", "gift.fill"
+        ]),
+        ("Entertainment", [
+            "music.note", "film.fill", "gamecontroller.fill", "tv.fill",
+            "headphones", "mic.fill", "photo.fill", "camera.fill",
+            "paintbrush.fill", "book.closed.fill", "theatermasks.fill"
+        ]),
+        ("Transport & Travel", [
+            "car.fill", "airplane", "tram.fill", "bus.fill",
+            "ferry.fill", "map.fill", "location.fill", "globe"
+        ]),
+        ("Finance", [
+            "dollarsign.circle.fill", "banknote.fill", "creditcard.fill",
+            "chart.line.uptrend.xyaxis", "chart.pie.fill", "percent"
+        ])
+    ]
+
+    private var visibleCategories: [(name: String, icons: [String])] {
+        guard !searchText.isEmpty else { return categories }
+        let query = searchText.lowercased()
+        return categories.compactMap { cat in
+            if cat.name.lowercased().contains(query) { return cat }
+            let hits = cat.icons.filter {
+                $0.replacingOccurrences(of: ".", with: " ")
+                  .replacingOccurrences(of: "fill", with: "")
+                  .contains(query)
+            }
+            return hits.isEmpty ? nil : (name: cat.name, icons: hits)
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if visibleCategories.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
+                } else {
+                    ForEach(visibleCategories, id: \.name) { category in
+                        Section(category.name) {
+                            ForEach(category.icons, id: \.self) { icon in
+                                Button {
+                                    selectedIcon = icon
+                                    dismiss()
+                                } label: {
+                                    HStack(spacing: 12) {
+                                        Image(systemName: icon)
+                                            .font(.system(size: 20))
+                                            .foregroundStyle(selectedIcon == icon ? Color(hex: colorHex) : .primary)
+                                            .frame(width: 28)
+                                        Text(iconLabel(icon))
+                                            .foregroundStyle(.primary)
+                                        Spacer()
+                                        if selectedIcon == icon {
+                                            Image(systemName: "checkmark")
+                                                .foregroundStyle(Color(hex: colorHex))
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Choose Icon")
+            .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $searchText, prompt: "Search icons")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                }
+            }
+        }
+    }
+
+    private func iconLabel(_ symbol: String) -> String {
+        symbol
+            .replacingOccurrences(of: ".fill", with: "")
+            .replacingOccurrences(of: ".", with: " ")
+            .split(separator: " ")
+            .map { $0.capitalized }
+            .joined(separator: " ")
     }
 }
