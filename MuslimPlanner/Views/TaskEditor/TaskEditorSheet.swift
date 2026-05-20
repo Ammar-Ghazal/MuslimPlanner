@@ -128,10 +128,10 @@ struct TaskEditorSheet: View {
             }
             .onAppear { populate() }
             .sheet(isPresented: $showIconPicker) {
-                IconPickerSheet(selectedIcon: $symbolName, dismiss: $showIconPicker)
+                IconPickerSheet(selectedIcon: $symbolName)
             }
             .sheet(isPresented: $showColorPicker) {
-                ColorPickerSheet(selectedColor: $colorHex, dismiss: $showColorPicker)
+                ColorPickerSheet(selectedColor: $colorHex)
             }
             .sheet(isPresented: $showTypePicker) {
                 TemplateTreePickerSheet(constrainedTo: linkedTemplate.map(\.root)) { chosen in

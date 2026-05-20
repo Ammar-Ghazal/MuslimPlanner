@@ -38,9 +38,6 @@ struct TaskTemplateEditorSheet: View {
                             Circle().fill(Color(hex: colorHex)).frame(width: 32, height: 32)
                         }
                     }
-                    .sheet(isPresented: $showColorPicker) {
-                        ColorPickerSheet(selectedColor: $colorHex, dismiss: $showColorPicker)
-                    }
                     HStack {
                         Text("Icon")
                         Spacer()
@@ -50,9 +47,6 @@ struct TaskTemplateEditorSheet: View {
                                 Text("Change").font(.caption)
                             }
                         }
-                    }
-                    .sheet(isPresented: $showIconPicker) {
-                        IconPickerSheet(selectedIcon: $symbolName, dismiss: $showIconPicker)
                     }
                 }
 
@@ -100,6 +94,12 @@ struct TaskTemplateEditorSheet: View {
             .onAppear { populate() }
             .sheet(isPresented: $showSubtaskPicker) {
                 SubtaskPickerSheet(templates: availableSubtasks) { subtasks.append($0) }
+            }
+            .sheet(isPresented: $showColorPicker) {
+                ColorPickerSheet(selectedColor: $colorHex)
+            }
+            .sheet(isPresented: $showIconPicker) {
+                IconPickerSheet(selectedIcon: $symbolName)
             }
         }
     }
@@ -251,7 +251,7 @@ private struct NewSubtaskForm: View {
 
 struct IconPickerSheet: View {
     @Binding var selectedIcon: String
-    @Binding var dismiss: Bool
+    @Environment(\.dismiss) private var dismiss
 
     @State private var searchText = ""
 
@@ -285,7 +285,7 @@ struct IconPickerSheet: View {
         ("Food & Home", [
             "fork.knife", "cup.and.saucer.fill", "carrot.fill",
             "house.fill", "building.fill", "cart.fill", "bag.fill",
-            "broom.fill", "sofa.fill"
+            "broom", "sofa.fill"
         ]),
         ("People & Social", [
             "person.fill", "person.2.fill", "phone.fill", "message.fill",
@@ -340,7 +340,7 @@ struct IconPickerSheet: View {
                                     ForEach(category.icons, id: \.self) { icon in
                                         Button {
                                             selectedIcon = icon
-                                            self.dismiss = false
+                                            dismiss()
                                         } label: {
                                             Image(systemName: icon)
                                                 .font(.system(size: 24))
@@ -362,12 +362,36 @@ struct IconPickerSheet: View {
                     .padding(.vertical, 16)
                 }
             }
-            .searchable(text: $searchText, prompt: "Search icons")
+            .safeAreaInset(edge: .top, spacing: 0) {
+                VStack(spacing: 0) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(.secondary)
+                        TextField("Search icons", text: $searchText)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                        if !searchText.isEmpty {
+                            Button { searchText = "" } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .padding(10)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 8)
+
+                    Divider()
+                }
+                .background(Color(.systemBackground))
+            }
             .navigationTitle("Choose Icon")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button { self.dismiss = false } label: {
+                    Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .semibold))
                     }
@@ -381,7 +405,7 @@ struct IconPickerSheet: View {
 
 struct ColorPickerSheet: View {
     @Binding var selectedColor: String
-    @Binding var dismiss: Bool
+    @Environment(\.dismiss) private var dismiss
 
     @State private var customColor: Color = .blue
 
@@ -416,7 +440,7 @@ struct ColorPickerSheet: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectedColor = hex
-                            dismiss = false
+                            dismiss()
                         }
                     }
                 }
@@ -425,7 +449,7 @@ struct ColorPickerSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss = false } label: {
+                    Button { dismiss() } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .semibold))
                     }
