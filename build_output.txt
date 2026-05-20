@@ -1,0 +1,46 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme MuslimPlanner -destination "generic/platform=iOS Simulator" -configuration Debug build
+
+2026-05-18 22:13:11.323 xcodebuild[46701:10293074] [MT] IDERunDestination: Supported platforms for the buildables in the current scheme is empty.
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'MuslimPlanner' in project 'MuslimPlanner' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: c4b8a85f21af3fe6bbfdbb332f47b616
+Build description path: /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Intermediates.noindex/XCBuildData/c4b8a85f21af3fe6bbfdbb332f47b616.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk /Users/ammar/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F73-6cfe768891a92b912361537c460fe42b.sdkstatcache
+    cd /Users/ammar/Documents/Projects/MuslimPlanner/MuslimPlanner.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -o /Users/ammar/Library/Developer/Xcode/DerivedData/SDKStatCaches.noindex/iphonesimulator26.5-23F73-6cfe768891a92b912361537c460fe42b.sdkstatcache
+
+ProcessInfoPlistFile /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/Info.plist /Users/ammar/Documents/Projects/MuslimPlanner/MuslimPlanner/Resources/Info.plist (in target 'MuslimPlanner' from project 'MuslimPlanner')
+    cd /Users/ammar/Documents/Projects/MuslimPlanner
+    builtin-infoPlistUtility /Users/ammar/Documents/Projects/MuslimPlanner/MuslimPlanner/Resources/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -o /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/Info.plist
+
+CopySwiftLibs /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app (in target 'MuslimPlanner' from project 'MuslimPlanner')
+    cd /Users/ammar/Documents/Projects/MuslimPlanner
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/MuslimPlanner.debug.dylib --scan-folder /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/Frameworks --scan-folder /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/PlugIns --scan-folder /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/SystemExtensions --scan-folder /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/Extensions --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/System/Library/Frameworks/SwiftData.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/System/Library/Frameworks/CoreLocation.framework --scan-folder /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk/System/Library/Frameworks/UserNotifications.framework --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Products/Debug-iphonesimulator/MuslimPlanner.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/ammar/Library/Developer/Xcode/DerivedData/MuslimPlanner-fjqkhwjmxlgatxbfbkujzlhubwll/Build/Intermediates.noindex/MuslimPlanner.build/Debug-iphonesimulator/MuslimPlanner.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+Ignoring --strip-bitcode because --sign was not passed
+
+** BUILD SUCCEEDED **
+
