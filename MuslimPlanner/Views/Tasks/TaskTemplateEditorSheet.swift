@@ -15,7 +15,7 @@ struct TaskTemplateEditorSheet: View {
     @State private var subtasks: [TaskTemplate] = []
 
     private enum ActiveSheet: Identifiable {
-        case subtaskPicker, colorPicker, iconPicker
+        case subtaskPicker, colorPicker
         var id: Self { self }
     }
     @State private var activeSheet: ActiveSheet?
@@ -41,14 +41,15 @@ struct TaskTemplateEditorSheet: View {
                             Circle().fill(Color(hex: colorHex)).frame(width: 32, height: 32)
                         }
                     }
-                    HStack {
-                        Text("Icon")
-                        Spacer()
-                        HStack(spacing: 8) {
-                            Image(systemName: symbolName).font(.system(size: 20))
-                            Button(action: { activeSheet = .iconPicker }) {
-                                Text("Change").font(.caption)
-                            }
+                    NavigationLink {
+                        IconListView(selectedIcon: $symbolName, colorHex: colorHex)
+                    } label: {
+                        HStack {
+                            Text("Icon")
+                            Spacer()
+                            Image(systemName: symbolName)
+                                .font(.system(size: 20))
+                                .foregroundStyle(Color(hex: colorHex))
                         }
                     }
                 }
@@ -102,8 +103,6 @@ struct TaskTemplateEditorSheet: View {
                 SubtaskPickerSheet(templates: availableSubtasks) { subtasks.append($0) }
             case .colorPicker:
                 ColorPickerSheet(selectedColor: $colorHex)
-            case .iconPicker:
-                IconPickerSheet(selectedIcon: $symbolName)
             }
         }
     }
@@ -251,10 +250,11 @@ private struct NewSubtaskForm: View {
     }
 }
 
-// MARK: - Icon picker
+// MARK: - Icon list (NavigationLink destination)
 
-struct IconPickerSheet: View {
+private struct IconListView: View {
     @Binding var selectedIcon: String
+    let colorHex: String
     @Environment(\.dismiss) private var dismiss
 
     @State private var searchText = ""
@@ -326,82 +326,48 @@ struct IconPickerSheet: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                if visibleCategories.isEmpty {
-                    ContentUnavailableView.search(text: searchText)
-                        .padding(.top, 60)
-                } else {
-                    VStack(alignment: .leading, spacing: 24) {
-                        ForEach(visibleCategories, id: \.name) { category in
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text(category.name)
-                                    .font(.footnote.weight(.semibold))
-                                    .foregroundStyle(.secondary)
-                                    .padding(.horizontal, 16)
-
-                                LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
-                                    ForEach(category.icons, id: \.self) { icon in
-                                        Button {
-                                            selectedIcon = icon
-                                            dismiss()
-                                        } label: {
-                                            Image(systemName: icon)
-                                                .font(.system(size: 24))
-                                                .foregroundStyle(selectedIcon == icon ? Color.green : Color.primary)
-                                                .frame(width: 52, height: 52)
-                                                .background(
-                                                    RoundedRectangle(cornerRadius: 10)
-                                                        .fill(selectedIcon == icon
-                                                            ? Color.green.opacity(0.15)
-                                                            : Color.secondary.opacity(0.08))
-                                                )
-                                        }
+        List {
+            if visibleCategories.isEmpty {
+                ContentUnavailableView.search(text: searchText)
+            } else {
+                ForEach(visibleCategories, id: \.name) { category in
+                    Section(category.name) {
+                        ForEach(category.icons, id: \.self) { icon in
+                            Button {
+                                selectedIcon = icon
+                                dismiss()
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image(systemName: icon)
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(selectedIcon == icon ? Color(hex: colorHex) : .primary)
+                                        .frame(width: 28)
+                                    Text(iconLabel(icon))
+                                        .foregroundStyle(.primary)
+                                    Spacer()
+                                    if selectedIcon == icon {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(Color(hex: colorHex))
                                     }
                                 }
-                                .padding(.horizontal, 12)
                             }
                         }
-                    }
-                    .padding(.vertical, 16)
-                }
-            }
-            .safeAreaInset(edge: .top, spacing: 0) {
-                VStack(spacing: 0) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "magnifyingglass")
-                            .foregroundStyle(.secondary)
-                        TextField("Search icons", text: $searchText)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                        if !searchText.isEmpty {
-                            Button { searchText = "" } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-                    .padding(10)
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-
-                    Divider()
-                }
-                .background(Color(.systemBackground))
-            }
-            .navigationTitle("Choose Icon")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
                     }
                 }
             }
         }
+        .navigationTitle("Choose Icon")
+        .navigationBarTitleDisplayMode(.inline)
+        .searchable(text: $searchText, prompt: "Search icons")
+    }
+
+    private func iconLabel(_ symbol: String) -> String {
+        symbol
+            .replacingOccurrences(of: ".fill", with: "")
+            .replacingOccurrences(of: ".", with: " ")
+            .split(separator: " ")
+            .map { $0.capitalized }
+            .joined(separator: " ")
     }
 }
 

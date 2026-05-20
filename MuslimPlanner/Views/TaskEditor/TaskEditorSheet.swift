@@ -16,12 +16,10 @@ struct TaskEditorSheet: View {
     @State private var durationMins = 30
     @State private var linkedTemplate: TaskTemplate? = nil
 
-    // Edit-mode appearance (written back to the task's type on save)
-    @State private var symbolName = "circle.fill"
     @State private var colorHex = "007AFF"
 
     private enum ActiveSheet: Identifiable {
-        case iconPicker, colorPicker, typePicker
+        case colorPicker, typePicker
         var id: Self { self }
     }
     @State private var activeSheet: ActiveSheet?
@@ -60,16 +58,6 @@ struct TaskEditorSheet: View {
                 if isEditing {
                     if task?.taskType != nil {
                         Section("Appearance") {
-                            Button { activeSheet = .iconPicker } label: {
-                                HStack {
-                                    Text("Icon").foregroundStyle(.primary)
-                                    Spacer()
-                                    Image(systemName: symbolName)
-                                        .foregroundStyle(Color(hex: colorHex))
-                                    Image(systemName: "chevron.right")
-                                        .font(.caption2).foregroundStyle(.tertiary)
-                                }
-                            }
                             Button { activeSheet = .colorPicker } label: {
                                 HStack {
                                     Text("Color").foregroundStyle(.primary)
@@ -133,8 +121,6 @@ struct TaskEditorSheet: View {
         }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
-            case .iconPicker:
-                IconPickerSheet(selectedIcon: $symbolName)
             case .colorPicker:
                 ColorPickerSheet(selectedColor: $colorHex)
             case .typePicker:
@@ -154,7 +140,6 @@ struct TaskEditorSheet: View {
             title = t.title
             startTime = t.startTime ?? defaultStartTime()
             durationMins = t.durationMinutes ?? 30
-            symbolName = t.taskType?.symbolName ?? "circle.fill"
             colorHex = t.taskType?.colorHex ?? "007AFF"
             linkedTemplate = t.taskType
         } else if let p = prefill {
@@ -208,7 +193,6 @@ struct TaskEditorSheet: View {
             t.startTime = computedStart
             t.durationMinutes = durationMins
             t.prayerBlock = prayerBlock(for: computedStart)
-            t.taskType?.symbolName = symbolName
             t.taskType?.colorHex = colorHex
         } else {
             let newTask = PlanTask(
