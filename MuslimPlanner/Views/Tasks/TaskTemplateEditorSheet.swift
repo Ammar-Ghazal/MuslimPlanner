@@ -13,9 +13,12 @@ struct TaskTemplateEditorSheet: View {
     @State private var colorHex     = "007AFF"
     @State private var symbolName   = "circle.fill"
     @State private var subtasks: [TaskTemplate] = []
-    @State private var showSubtaskPicker = false
-    @State private var showColorPicker = false
-    @State private var showIconPicker = false
+
+    private enum ActiveSheet: Identifiable {
+        case subtaskPicker, colorPicker, iconPicker
+        var id: Self { self }
+    }
+    @State private var activeSheet: ActiveSheet?
 
     private var isEditing: Bool { template != nil }
 
@@ -34,7 +37,7 @@ struct TaskTemplateEditorSheet: View {
                     HStack {
                         Text("Color")
                         Spacer()
-                        Button(action: { showColorPicker = true }) {
+                        Button(action: { activeSheet = .colorPicker }) {
                             Circle().fill(Color(hex: colorHex)).frame(width: 32, height: 32)
                         }
                     }
@@ -43,7 +46,7 @@ struct TaskTemplateEditorSheet: View {
                         Spacer()
                         HStack(spacing: 8) {
                             Image(systemName: symbolName).font(.system(size: 20))
-                            Button(action: { showIconPicker = true }) {
+                            Button(action: { activeSheet = .iconPicker }) {
                                 Text("Change").font(.caption)
                             }
                         }
@@ -64,7 +67,7 @@ struct TaskTemplateEditorSheet: View {
                     .onMove  { subtasks.move(fromOffsets: $0, toOffset: $1) }
 
                     Button {
-                        showSubtaskPicker = true
+                        activeSheet = .subtaskPicker
                     } label: {
                         Label("Add Subtask", systemImage: "plus")
                     }
@@ -92,13 +95,14 @@ struct TaskTemplateEditorSheet: View {
                 }
             }
             .onAppear { populate() }
-            .sheet(isPresented: $showSubtaskPicker) {
+        }
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .subtaskPicker:
                 SubtaskPickerSheet(templates: availableSubtasks) { subtasks.append($0) }
-            }
-            .sheet(isPresented: $showColorPicker) {
+            case .colorPicker:
                 ColorPickerSheet(selectedColor: $colorHex)
-            }
-            .sheet(isPresented: $showIconPicker) {
+            case .iconPicker:
                 IconPickerSheet(selectedIcon: $symbolName)
             }
         }
@@ -285,7 +289,7 @@ struct IconPickerSheet: View {
         ("Food & Home", [
             "fork.knife", "cup.and.saucer.fill", "carrot.fill",
             "house.fill", "building.fill", "cart.fill", "bag.fill",
-            "broom", "sofa.fill"
+            "trash", "sofa.fill"
         ]),
         ("People & Social", [
             "person.fill", "person.2.fill", "phone.fill", "message.fill",

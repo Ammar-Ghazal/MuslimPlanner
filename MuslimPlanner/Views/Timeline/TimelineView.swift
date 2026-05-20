@@ -16,11 +16,20 @@ struct TimelineView: View {
     @Query private var allTasks: [PlanTask]
     @Environment(\.modelContext) private var ctx
 
-    @State private var editingTask: PlanTask?
-    @State private var showTypePicker = false
-    @State private var showSettings   = false
-    @State private var showCalendar   = false
-    @State private var calendarMonth  = Calendar.current.startOfDay(for: Date())
+    private enum Sheet: Identifiable {
+        case editTask(PlanTask), typePicker, settings, calendar
+        var id: String {
+            switch self {
+            case .editTask(let t): return "task-\(ObjectIdentifier(t).hashValue)"
+            case .typePicker:     return "typePicker"
+            case .settings:       return "settings"
+            case .calendar:       return "calendar"
+            }
+        }
+    }
+
+    @State private var activeSheet: Sheet?
+    @State private var calendarMonth = Calendar.current.startOfDay(for: Date())
 
     // Vertical drag state
     @State private var draggingID: PersistentIdentifier? = nil
@@ -102,34 +111,20 @@ struct TimelineView: View {
                 }
             }
         }
-        .sheet(item: $editingTask) { task in
-            TaskEditorSheet(
-                task: task,
-                date: viewModel.selectedDate,
-                prayerTimes: viewModel.prayerTimes
-            )
-        }
-        .sheet(isPresented: $showTypePicker) {
-            TaskTypePickerSheet(
-                date: viewModel.selectedDate,
-                prayerTimes: viewModel.prayerTimes
-            )
-        }
-        .sheet(isPresented: $showSettings) {
-            SettingsView(settings: settings, rawPrayerTimes: viewModel.rawPrayerTimes)
-                .environmentObject(viewModel.locationService)
-        }
-        .onChange(of: showSettings) { _, isShowing in
-            if !isShowing {
-                viewModel.reapplyAdjustments(settings: settings)
+        .sheet(item: $activeSheet, onDismiss: {
+            viewModel.reapplyAdjustments(settings: settings)
+        }) { sheet in
+            switch sheet {
+            case .editTask(let task):
+                TaskEditorSheet(task: task, date: viewModel.selectedDate, prayerTimes: viewModel.prayerTimes)
+            case .typePicker:
+                TaskTypePickerSheet(date: viewModel.selectedDate, prayerTimes: viewModel.prayerTimes)
+            case .settings:
+                SettingsView(settings: settings, rawPrayerTimes: viewModel.rawPrayerTimes)
+                    .environmentObject(viewModel.locationService)
+            case .calendar:
+                MiniCalendarSheet(selectedDate: $viewModel.selectedDate, displayMonth: $calendarMonth, allTasks: allTasks)
             }
-        }
-        .sheet(isPresented: $showCalendar) {
-            MiniCalendarSheet(
-                selectedDate: $viewModel.selectedDate,
-                displayMonth: $calendarMonth,
-                allTasks: allTasks
-            )
         }
         .overlay(alignment: .bottomTrailing) {
             addButton
@@ -144,7 +139,7 @@ struct TimelineView: View {
             HStack(spacing: 6) {
                 Button {
                     calendarMonth = viewModel.selectedDate
-                    showCalendar = true
+                    activeSheet = .calendar
                 } label: {
                     Text(viewModel.selectedDate.formatted(.dateTime.month(.wide).year()))
                         .font(.title2.bold())
@@ -170,7 +165,7 @@ struct TimelineView: View {
 
                 Spacer()
 
-                Button { showSettings = true } label: {
+                Button { activeSheet = .settings } label: {
                     Image(systemName: "gearshape")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(.secondary)
@@ -340,7 +335,7 @@ struct TimelineView: View {
                     revealedSwipes.remove(id)
                 }
             } else {
-                editingTask = task
+                activeSheet = .editTask(task)
             }
         }
         .frame(width: cardW, height: h)
@@ -431,7 +426,7 @@ struct TimelineView: View {
     // MARK: - FAB
 
     private var addButton: some View {
-        Button { showTypePicker = true } label: {
+        Button { activeSheet = .typePicker } label: {
             Image(systemName: "plus")
                 .font(.title2.bold())
                 .foregroundStyle(.white)

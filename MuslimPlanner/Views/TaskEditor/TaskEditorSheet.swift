@@ -15,13 +15,16 @@ struct TaskEditorSheet: View {
     @State private var startTime = Date()
     @State private var durationMins = 30
     @State private var linkedTemplate: TaskTemplate? = nil
-    @State private var showTypePicker = false
 
     // Edit-mode appearance (written back to the task's type on save)
     @State private var symbolName = "circle.fill"
     @State private var colorHex = "007AFF"
-    @State private var showIconPicker = false
-    @State private var showColorPicker = false
+
+    private enum ActiveSheet: Identifiable {
+        case iconPicker, colorPicker, typePicker
+        var id: Self { self }
+    }
+    @State private var activeSheet: ActiveSheet?
 
     private var isEditing: Bool { task != nil }
 
@@ -57,7 +60,7 @@ struct TaskEditorSheet: View {
                 if isEditing {
                     if task?.taskType != nil {
                         Section("Appearance") {
-                            Button { showIconPicker = true } label: {
+                            Button { activeSheet = .iconPicker } label: {
                                 HStack {
                                     Text("Icon").foregroundStyle(.primary)
                                     Spacer()
@@ -67,7 +70,7 @@ struct TaskEditorSheet: View {
                                         .font(.caption2).foregroundStyle(.tertiary)
                                 }
                             }
-                            Button { showColorPicker = true } label: {
+                            Button { activeSheet = .colorPicker } label: {
                                 HStack {
                                     Text("Color").foregroundStyle(.primary)
                                     Spacer()
@@ -87,7 +90,7 @@ struct TaskEditorSheet: View {
                 } else {
                     Section("Task Type") {
                         if let t = linkedTemplate {
-                            Button { showTypePicker = true } label: {
+                            Button { activeSheet = .typePicker } label: {
                                 HStack(spacing: 10) {
                                     Image(systemName: t.symbolName)
                                         .foregroundStyle(Color(hex: t.colorHex))
@@ -104,7 +107,7 @@ struct TaskEditorSheet: View {
                                 }
                             }
                         } else {
-                            Button { showTypePicker = true } label: {
+                            Button { activeSheet = .typePicker } label: {
                                 Label("Set Task Type", systemImage: "tag")
                                     .foregroundStyle(.blue)
                             }
@@ -127,17 +130,18 @@ struct TaskEditorSheet: View {
                 }
             }
             .onAppear { populate() }
-            .sheet(isPresented: $showIconPicker) {
+        }
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+            case .iconPicker:
                 IconPickerSheet(selectedIcon: $symbolName)
-            }
-            .sheet(isPresented: $showColorPicker) {
+            case .colorPicker:
                 ColorPickerSheet(selectedColor: $colorHex)
-            }
-            .sheet(isPresented: $showTypePicker) {
+            case .typePicker:
                 TemplateTreePickerSheet(constrainedTo: linkedTemplate.map(\.root)) { chosen in
                     linkedTemplate = chosen
                     title = chosen.displayTitle
-                    showTypePicker = false
+                    activeSheet = nil
                 }
             }
         }
