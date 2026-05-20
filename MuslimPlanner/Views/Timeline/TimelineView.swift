@@ -16,7 +16,6 @@ struct TimelineView: View {
     @Query private var allTasks: [PlanTask]
     @Environment(\.modelContext) private var ctx
 
-    @State private var showEditor     = false
     @State private var editingTask: PlanTask?
     @State private var showTypePicker = false
     @State private var showSettings   = false
@@ -103,13 +102,12 @@ struct TimelineView: View {
                 }
             }
         }
-        .sheet(isPresented: $showEditor) {
+        .sheet(item: $editingTask) { task in
             TaskEditorSheet(
-                task: editingTask,
+                task: task,
                 date: viewModel.selectedDate,
                 prayerTimes: viewModel.prayerTimes
             )
-            .onDisappear { editingTask = nil }
         }
         .sheet(isPresented: $showTypePicker) {
             TaskTypePickerSheet(
@@ -343,7 +341,6 @@ struct TimelineView: View {
                 }
             } else {
                 editingTask = task
-                showEditor  = true
             }
         }
         .frame(width: cardW, height: h)
