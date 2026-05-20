@@ -23,17 +23,6 @@ struct MainTabView: View {
 
     @ViewBuilder
     private var content: some View {
-        #if targetEnvironment(macCatalyst)
-        NavigationSplitView {
-            List {
-                NavigationLink("Timeline", destination: TimelineView(viewModel: viewModel, settings: settings))
-                NavigationLink("Settings", destination: SettingsView(settings: settings))
-            }
-            .navigationTitle("Prayer Planner")
-        } detail: {
-            TimelineView(viewModel: viewModel, settings: settings)
-        }
-        #else
         TabView {
             TimelineView(viewModel: viewModel, settings: settings)
                 .tabItem { Label("Today", systemImage: "calendar.day.timeline.left") }
@@ -41,6 +30,5 @@ struct MainTabView: View {
             SettingsView(settings: settings)
                 .tabItem { Label("Settings", systemImage: "gearshape") }
         }
-        #endif
     }
 }
