@@ -384,9 +384,21 @@ private struct MiniCalendarSheet: View {
     var body: some View {
         VStack(spacing: 0) {
             // Month navigation row
-            HStack(spacing: 12) {
+            HStack(spacing: 14) {
                 Text(displayMonth.formatted(.dateTime.month(.wide).year()))
                     .font(.title3.bold())
+
+                Spacer()
+
+                Button("Today") {
+                    let today = cal.startOfDay(for: Date())
+                    selectedDate = today
+                    displayMonth = today
+                    dismiss()
+                }
+                .font(.callout)
+                .foregroundStyle(.blue)
+                .buttonStyle(.plain)
 
                 Button { shiftMonth(-1) } label: {
                     Image(systemName: "chevron.left")
@@ -400,7 +412,12 @@ private struct MiniCalendarSheet: View {
                 }
                 .buttonStyle(.plain)
 
-                Spacer()
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.title3)
+                        .foregroundStyle(Color.secondary.opacity(0.55))
+                }
+                .buttonStyle(.plain)
             }
             .padding(.horizontal, 20)
             .padding(.top, 24)
