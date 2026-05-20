@@ -631,11 +631,19 @@ struct TimedTaskCard: View {
 
         HStack(spacing: 0) {
 
-            // ── Left panel: name + time ───────────────────────────────────────
+            // ── Left panel: icon + name + time ───────────────────────────────
             HStack(spacing: 0) {
                 RoundedRectangle(cornerRadius: 2)
                     .fill(task.color)
                     .frame(width: 4)
+
+                if let type = task.taskType {
+                    Image(systemName: type.symbolName)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(task.color.opacity(0.85))
+                        .frame(width: 26)
+                        .padding(.leading, 6)
+                }
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(task.title)
@@ -651,7 +659,7 @@ struct TimedTaskCard: View {
                             .foregroundStyle(.tertiary)
                     }
                 }
-                .padding(.leading, 8)
+                .padding(.leading, task.taskType != nil ? 4 : 8)
                 .padding(.vertical, 4)
 
                 Spacer(minLength: 0)

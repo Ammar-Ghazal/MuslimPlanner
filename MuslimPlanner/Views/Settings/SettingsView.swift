@@ -4,6 +4,7 @@ import UIKit
 struct SettingsView: View {
     @Bindable var settings: AppSettings
     @EnvironmentObject var locationService: LocationService
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
@@ -89,6 +90,14 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss() } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                }
+            }
         }
     }
 }

@@ -253,37 +253,101 @@ private struct IconPickerSheet: View {
     @Binding var selectedIcon: String
     @Binding var dismiss: Bool
 
-    let commonIcons = [
-        "circle.fill", "square.fill", "star.fill", "heart.fill",
-        "bookmark.fill", "flag.fill", "bell.fill", "clock.fill",
-        "checkmark.circle.fill", "pencil.circle.fill", "trash.circle.fill",
-        "book.fill", "briefcase.fill", "fork.knife", "dumbbell.fill",
-        "person.fill", "building.fill", "car.fill", "airplane",
-        "music.note", "film.fill", "gamecontroller.fill", "palette.fill"
+    private let categories: [(name: String, icons: [String])] = [
+        ("General", [
+            "circle.fill", "square.fill", "star.fill", "heart.fill",
+            "bookmark.fill", "flag.fill", "tag.fill", "bell.fill",
+            "checkmark.circle.fill", "exclamationmark.circle.fill",
+            "info.circle.fill", "questionmark.circle.fill"
+        ]),
+        ("Time & Planning", [
+            "clock.fill", "calendar", "alarm.fill", "hourglass",
+            "timer", "chart.bar.fill", "list.bullet", "checklist",
+            "tray.fill", "archivebox.fill", "note.text", "arrow.clockwise"
+        ]),
+        ("Work & Study", [
+            "briefcase.fill", "book.fill", "pencil", "pencil.circle.fill",
+            "doc.fill", "folder.fill", "graduationcap.fill", "lightbulb.fill",
+            "brain", "magnifyingglass", "wrench.fill", "hammer.fill"
+        ]),
+        ("Prayer & Wellness", [
+            "hands.sparkles.fill", "figure.stand", "moon.fill", "sun.max.fill",
+            "sparkles", "drop.fill", "leaf.fill", "wind",
+            "figure.mind.and.body", "cross.case.fill", "lungs.fill"
+        ]),
+        ("Health & Fitness", [
+            "dumbbell.fill", "figure.walk", "figure.run",
+            "heart.fill", "pills.fill", "bed.double.fill", "shower.fill",
+            "bicycle", "sportscourt.fill", "trophy.fill"
+        ]),
+        ("Food & Home", [
+            "fork.knife", "cup.and.saucer.fill", "carrot.fill",
+            "house.fill", "building.fill", "cart.fill", "bag.fill",
+            "broom.fill", "sofa.fill"
+        ]),
+        ("People & Social", [
+            "person.fill", "person.2.fill", "phone.fill", "message.fill",
+            "envelope.fill", "video.fill", "bubble.left.fill",
+            "hand.wave.fill", "gift.fill"
+        ]),
+        ("Entertainment", [
+            "music.note", "film.fill", "gamecontroller.fill", "tv.fill",
+            "headphones", "mic.fill", "photo.fill", "camera.fill",
+            "paintbrush.fill", "book.closed.fill", "theatermasks.fill"
+        ]),
+        ("Transport & Travel", [
+            "car.fill", "airplane", "tram.fill", "bus.fill",
+            "ferry.fill", "map.fill", "location.fill", "globe"
+        ]),
+        ("Finance", [
+            "dollarsign.circle.fill", "banknote.fill", "creditcard.fill",
+            "chart.line.uptrend.xyaxis", "chart.pie.fill", "percent"
+        ])
     ]
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 50))], spacing: 16) {
-                    ForEach(commonIcons, id: \.self) { icon in
-                        Button(action: {
-                            selectedIcon = icon
-                            self.dismiss = false
-                        }) {
-                            VStack {
-                                Image(systemName: icon)
-                                    .font(.system(size: 28))
-                                    .foregroundStyle(selectedIcon == icon ? .green : .primary)
+                VStack(alignment: .leading, spacing: 24) {
+                    ForEach(categories, id: \.name) { category in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(category.name)
+                                .font(.footnote.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                                .padding(.horizontal, 16)
+
+                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+                                ForEach(category.icons, id: \.self) { icon in
+                                    Button {
+                                        selectedIcon = icon
+                                        self.dismiss = false
+                                    } label: {
+                                        Image(systemName: icon)
+                                            .font(.system(size: 24))
+                                            .foregroundStyle(selectedIcon == icon ? Color.green : Color.primary)
+                                            .frame(width: 52, height: 52)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 10)
+                                                    .fill(selectedIcon == icon
+                                                        ? Color.green.opacity(0.15)
+                                                        : Color.secondary.opacity(0.08))
+                                            )
+                                    }
+                                }
                             }
-                            .frame(height: 50)
+                            .padding(.horizontal, 12)
                         }
                     }
                 }
-                .padding()
+                .padding(.vertical, 16)
             }
             .navigationTitle("Choose Icon")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { self.dismiss = false }
+                }
+            }
         }
     }
 }
