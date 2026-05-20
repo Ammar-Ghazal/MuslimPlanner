@@ -17,8 +17,11 @@ struct TimelineView: View {
     @State private var showEditor     = false
     @State private var editingTask: PlanTask?
     @State private var showTypePicker = false
+    @State private var showSettings   = false
+    @State private var showCalendar   = false
+    @State private var calendarMonth  = Calendar.current.startOfDay(for: Date())
 
-    // Drag state — only one task dragged at a time
+    // Drag state
     @State private var draggingID: PersistentIdentifier? = nil
     @State private var dragOffset: CGFloat = 0
 
@@ -57,45 +60,41 @@ struct TimelineView: View {
     // MARK: - Body
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                dateHeader
-                Divider()
+        VStack(spacing: 0) {
+            calendarHeader
+            Divider()
 
-                if let err = viewModel.prayerError {
-                    errorBanner(err)
-                }
+            if let err = viewModel.prayerError {
+                errorBanner(err)
+            }
 
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        ZStack(alignment: .topLeading) {
-                            hourGrid
-                            currentTimeLine
-                            prayerLayer
-                            // GeometryReader lets task cards stretch to full available width
-                            GeometryReader { geo in
-                                let taskW = geo.size.width - kRulerWidth - kTaskInset - kRightPad
-                                ForEach(timedTasks) { task in
-                                    taskCard(task, width: taskW)
-                                }
+            ScrollViewReader { proxy in
+                ScrollView {
+                    ZStack(alignment: .topLeading) {
+                        hourGrid
+                        currentTimeLine
+                        prayerLayer
+                        GeometryReader { geo in
+                            let taskW = geo.size.width - kRulerWidth - kTaskInset - kRightPad
+                            ForEach(timedTasks) { task in
+                                taskCard(task, width: taskW)
                             }
-                            Color.clear.frame(width: 1, height: canvasHeight)
                         }
-                        .frame(maxWidth: .infinity, minHeight: canvasHeight)
+                        Color.clear.frame(width: 1, height: canvasHeight)
                     }
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                            proxy.scrollTo("now", anchor: .center)
-                        }
+                    .frame(maxWidth: .infinity, minHeight: canvasHeight)
+                }
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        proxy.scrollTo("now", anchor: .center)
                     }
-                    .onChange(of: viewModel.selectedDate) {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                            proxy.scrollTo("now", anchor: .center)
-                        }
+                }
+                .onChange(of: viewModel.selectedDate) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                        proxy.scrollTo("now", anchor: .center)
                     }
                 }
             }
-            .navigationBarHidden(true)
         }
         .sheet(isPresented: $showEditor) {
             TaskEditorSheet(
@@ -111,8 +110,127 @@ struct TimelineView: View {
                 prayerTimes: viewModel.prayerTimes
             )
         }
+        .sheet(isPresented: $showSettings) {
+            SettingsView(settings: settings)
+                .environmentObject(viewModel.locationService)
+        }
+        .sheet(isPresented: $showCalendar) {
+            MiniCalendarSheet(
+                selectedDate: $viewModel.selectedDate,
+                displayMonth: $calendarMonth,
+                allTasks: allTasks
+            )
+        }
         .overlay(alignment: .bottomTrailing) {
             addButton
+        }
+    }
+
+    // MARK: - Calendar header (month/year row + week strip)
+
+    private var calendarHeader: some View {
+        VStack(spacing: 0) {
+            // Top row: month/year + nav arrows + gear
+            HStack(spacing: 6) {
+                Button {
+                    calendarMonth = viewModel.selectedDate
+                    showCalendar = true
+                } label: {
+                    Text(viewModel.selectedDate.formatted(.dateTime.month(.wide).year()))
+                        .font(.title2.bold())
+                        .foregroundStyle(.primary)
+                }
+                .buttonStyle(.plain)
+
+                Button { shiftWeek(-1) } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.callout.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .padding(4)
+                }
+                .buttonStyle(.plain)
+
+                Button { shiftWeek(1) } label: {
+                    Image(systemName: "chevron.right")
+                        .font(.callout.weight(.medium))
+                        .foregroundStyle(.secondary)
+                        .padding(4)
+                }
+                .buttonStyle(.plain)
+
+                Spacer()
+
+                Button { showSettings = true } label: {
+                    Image(systemName: "gearshape")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 36, height: 36)
+                        .background(Circle().fill(Color.secondary.opacity(0.15)))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 6)
+
+            // Week strip
+            HStack(spacing: 0) {
+                ForEach(weekDays, id: \.self) { day in
+                    weekDayCell(day)
+                }
+            }
+            .padding(.horizontal, 4)
+            .padding(.bottom, 8)
+        }
+    }
+
+    // Mon–Sun of the week containing selectedDate
+    private var weekDays: [Date] {
+        let cal = Calendar.current
+        let weekday = cal.component(.weekday, from: viewModel.selectedDate)
+        let daysFromMonday = (weekday - 2 + 7) % 7
+        guard let monday = cal.date(byAdding: .day, value: -daysFromMonday, to: viewModel.selectedDate) else { return [] }
+        return (0..<7).compactMap { cal.date(byAdding: .day, value: $0, to: monday) }
+    }
+
+    @ViewBuilder
+    private func weekDayCell(_ date: Date) -> some View {
+        let cal = Calendar.current
+        let isToday    = cal.isDateInToday(date)
+        let isSelected = cal.isDate(date, inSameDayAs: viewModel.selectedDate)
+        let dayNum     = cal.component(.day, from: date)
+        let dayName    = date.formatted(.dateTime.weekday(.abbreviated))
+
+        Button {
+            viewModel.selectedDate = cal.startOfDay(for: date)
+        } label: {
+            VStack(spacing: 4) {
+                Text(dayName)
+                    .font(.system(size: 10))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+
+                ZStack {
+                    if isToday {
+                        Circle().fill(Color.yellow).frame(width: 32, height: 32)
+                    } else if isSelected {
+                        Circle().fill(Color.primary.opacity(0.18)).frame(width: 32, height: 32)
+                    }
+                    Text("\(dayNum)")
+                        .font(.system(size: 15, weight: isToday || isSelected ? .semibold : .regular))
+                        .foregroundStyle(isToday ? Color.black : .primary)
+                }
+                .frame(width: 32, height: 32)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func shiftWeek(_ direction: Int) {
+        let cal = Calendar.current
+        if let shifted = cal.date(byAdding: .weekOfYear, value: direction, to: viewModel.selectedDate) {
+            viewModel.selectedDate = cal.startOfDay(for: shifted)
         }
     }
 
@@ -154,7 +272,7 @@ struct TimelineView: View {
         }
     }
 
-    // MARK: - Prayer layer (fixed markers, no tasks)
+    // MARK: - Prayer layer
 
     private var prayerLayer: some View {
         ForEach(viewModel.prayerTimes) { prayer in
@@ -190,13 +308,13 @@ struct TimelineView: View {
         .gesture(
             DragGesture(minimumDistance: 8, coordinateSpace: .global)
                 .onChanged { val in
-                    draggingID  = task.persistentModelID
-                    dragOffset  = val.translation.height
+                    draggingID = task.persistentModelID
+                    dragOffset = val.translation.height
                 }
                 .onEnded { val in
                     commitDrag(task: task, pixelOffset: val.translation.height)
-                    draggingID  = nil
-                    dragOffset  = 0
+                    draggingID = nil
+                    dragOffset = 0
                 }
         )
     }
@@ -213,50 +331,10 @@ struct TimelineView: View {
         task.prayerBlock = viewModel.prayerBlock(containing: newStart)
     }
 
-    // MARK: - Date header
-
-    private var dateHeader: some View {
-        HStack {
-            Button {
-                viewModel.selectedDate = Calendar.current.date(
-                    byAdding: .day, value: -1, to: viewModel.selectedDate)!
-            } label: {
-                Image(systemName: "chevron.left").font(.title3).padding(8)
-            }
-
-            Spacer()
-
-            VStack(spacing: 2) {
-                Text(viewModel.selectedDate, format: .dateTime.weekday(.wide))
-                    .font(.headline)
-                if let countdown = viewModel.countdownText() {
-                    Text(countdown).font(.caption).foregroundStyle(.secondary)
-                }
-                if !viewModel.locationService.cityName.isEmpty {
-                    Text(viewModel.locationService.cityName)
-                        .font(.caption2).foregroundStyle(.tertiary)
-                }
-            }
-
-            Spacer()
-
-            Button {
-                viewModel.selectedDate = Calendar.current.date(
-                    byAdding: .day, value: 1, to: viewModel.selectedDate)!
-            } label: {
-                Image(systemName: "chevron.right").font(.title3).padding(8)
-            }
-        }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
-    }
-
     // MARK: - FAB
 
     private var addButton: some View {
-        Button {
-            showTypePicker = true
-        } label: {
+        Button { showTypePicker = true } label: {
             Image(systemName: "plus")
                 .font(.title2.bold())
                 .foregroundStyle(.white)
@@ -291,6 +369,137 @@ struct TimelineView: View {
     }
 }
 
+// MARK: - Mini calendar sheet
+
+private struct MiniCalendarSheet: View {
+    @Binding var selectedDate: Date
+    @Binding var displayMonth: Date
+    let allTasks: [PlanTask]
+
+    @Environment(\.dismiss) private var dismiss
+
+    private let cal = Calendar.current
+    private let weekdayHeaders = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+    var body: some View {
+        VStack(spacing: 0) {
+            // Month navigation row
+            HStack(spacing: 12) {
+                Text(displayMonth.formatted(.dateTime.month(.wide).year()))
+                    .font(.title3.bold())
+
+                Button { shiftMonth(-1) } label: {
+                    Image(systemName: "chevron.left")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+
+                Button { shiftMonth(1) } label: {
+                    Image(systemName: "chevron.right")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.plain)
+
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 24)
+            .padding(.bottom, 16)
+
+            // Day-of-week header row
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 0) {
+                ForEach(weekdayHeaders, id: \.self) { name in
+                    Text(name)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.bottom, 6)
+                }
+
+                // Date cells (nil = empty leading/trailing pad)
+                ForEach(Array(calendarDates.enumerated()), id: \.offset) { _, date in
+                    if let date {
+                        calendarCell(date)
+                    } else {
+                        Color.clear.frame(height: 50)
+                    }
+                }
+            }
+            .padding(.horizontal, 12)
+
+            Spacer()
+        }
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
+    }
+
+    @ViewBuilder
+    private func calendarCell(_ date: Date) -> some View {
+        let isToday    = cal.isDateInToday(date)
+        let isSelected = cal.isDate(date, inSameDayAs: selectedDate)
+        let dayNum     = cal.component(.day, from: date)
+        let dots       = taskColors(for: date)
+
+        Button {
+            selectedDate = cal.startOfDay(for: date)
+            dismiss()
+        } label: {
+            VStack(spacing: 2) {
+                ZStack {
+                    if isToday {
+                        Circle().fill(Color.yellow).frame(width: 32, height: 32)
+                    } else if isSelected {
+                        Circle().fill(Color.primary.opacity(0.2)).frame(width: 32, height: 32)
+                    }
+                    Text("\(dayNum)")
+                        .font(.system(size: 14, weight: isToday || isSelected ? .semibold : .regular))
+                        .foregroundStyle(isToday ? Color.black : .primary)
+                }
+                .frame(width: 32, height: 32)
+
+                HStack(spacing: 3) {
+                    ForEach(Array(dots.enumerated()), id: \.offset) { _, color in
+                        Circle().fill(color).frame(width: 4, height: 4)
+                    }
+                }
+                .frame(height: 5)
+            }
+            .frame(height: 50)
+        }
+        .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
+    }
+
+    private func shiftMonth(_ direction: Int) {
+        if let shifted = cal.date(byAdding: .month, value: direction, to: displayMonth) {
+            displayMonth = shifted
+        }
+    }
+
+    // Returns nil-padded array aligned to Monday-start grid
+    private var calendarDates: [Date?] {
+        let firstDay = cal.date(from: cal.dateComponents([.year, .month], from: displayMonth))!
+        let firstWeekday = cal.component(.weekday, from: firstDay)
+        let leadingEmpties = (firstWeekday - 2 + 7) % 7
+        let daysInMonth = cal.range(of: .day, in: .month, for: displayMonth)!.count
+
+        var dates: [Date?] = Array(repeating: nil, count: leadingEmpties)
+        for offset in 0..<daysInMonth {
+            dates.append(cal.date(byAdding: .day, value: offset, to: firstDay))
+        }
+        while dates.count % 7 != 0 { dates.append(nil) }
+        return dates
+    }
+
+    // Up to 3 colored dots representing task types on that day
+    private func taskColors(for date: Date) -> [Color] {
+        let colors = allTasks
+            .filter { cal.isDate($0.date, inSameDayAs: date) }
+            .compactMap { $0.taskType.map { Color(hex: $0.colorHex) } }
+        return Array(colors.prefix(3))
+    }
+}
+
 // MARK: - Task card view (3-panel layout)
 
 struct TimedTaskCard: View {
@@ -300,7 +509,6 @@ struct TimedTaskCard: View {
     @Environment(\.modelContext) private var ctx
     @State private var showTypePicker = false
 
-    // True when there is at least one alternative to switch to within the same family
     private var hasAlternatives: Bool {
         guard let t = task.taskType else { return false }
         return !t.root.subtasks.isEmpty
@@ -404,7 +612,6 @@ private struct CardTypePickerSheet: View {
                         $0.persistentModelID != currentID
                     }
 
-                    // Other subtasks within the same family
                     if !alternatives.isEmpty {
                         Section {
                             ForEach(alternatives) { sub in
@@ -413,7 +620,6 @@ private struct CardTypePickerSheet: View {
                         }
                     }
 
-                    // "Just [root]" — only if currently on a subtask
                     if currentID != root.persistentModelID {
                         Section {
                             Button { pick(root) } label: {
@@ -431,7 +637,6 @@ private struct CardTypePickerSheet: View {
                         }
                     }
                 } else {
-                    // No type yet — show full tree so user can set one
                     ForEach(rootTemplates) { t in
                         if t.subtasks.isEmpty {
                             Button { pick(t) } label: { templateRow(t) }
