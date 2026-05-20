@@ -27,9 +27,23 @@ struct TaskEditorSheet: View {
                     TextField("Task title", text: $title)
                 }
 
-                Section("Schedule") {
-                    DatePicker("Start time", selection: $startTime, displayedComponents: .hourAndMinute)
-                    Stepper("Duration: \(durationMins) min", value: $durationMins, in: 5...480, step: 5)
+                Section("Start Time") {
+                    DatePicker("Time", selection: $startTime, displayedComponents: .hourAndMinute)
+                        .datePickerStyle(.wheel)
+                        .labelsHidden()
+                        .frame(maxWidth: .infinity)
+                }
+
+                Section("Duration") {
+                    Picker("Duration", selection: $durationMins) {
+                        ForEach(Array(stride(from: 5, through: 480, by: 5)), id: \.self) { mins in
+                            Text(formatDuration(mins)).tag(mins)
+                        }
+                    }
+                    .pickerStyle(.wheel)
+                    .frame(height: 110)
+                    .clipped()
+
                     let end = startTime.addingTimeInterval(Double(durationMins * 60))
                     LabeledContent("Ends at", value: end.formatted(.dateTime.hour().minute()))
                         .foregroundStyle(.secondary)
@@ -125,6 +139,12 @@ struct TaskEditorSheet: View {
             minute: cal.component(.minute, from: now),
             second: 0, of: date
         ) ?? date
+    }
+
+    private func formatDuration(_ mins: Int) -> String {
+        if mins < 60 { return "\(mins) min" }
+        if mins % 60 == 0 { return "\(mins / 60) hr" }
+        return "\(mins / 60) hr \(mins % 60) min"
     }
 
     private func prayerBlock(for time: Date) -> String {
