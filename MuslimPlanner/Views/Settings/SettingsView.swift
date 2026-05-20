@@ -81,7 +81,7 @@ struct SettingsView: View {
                 // Prayer adjustments
                 Section {
                     NavigationLink {
-                        PrayerAdjustmentsView(settings: settings, rawPrayerTimes: rawPrayerTimes)
+                        PrayerAdjustmentsView(settings: settings, rawPrayerTimes: rawPrayerTimes, onDismissSettings: { dismiss() })
                     } label: {
                         Label("Prayer Adjustments", systemImage: "clock.badge.checkmark")
                     }

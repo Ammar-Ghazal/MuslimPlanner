@@ -253,6 +253,8 @@ struct IconPickerSheet: View {
     @Binding var selectedIcon: String
     @Binding var dismiss: Bool
 
+    @State private var searchText = ""
+
     private let categories: [(name: String, icons: [String])] = [
         ("General", [
             "circle.fill", "square.fill", "star.fill", "heart.fill",
@@ -305,47 +307,70 @@ struct IconPickerSheet: View {
         ])
     ]
 
+    private var visibleCategories: [(name: String, icons: [String])] {
+        guard !searchText.isEmpty else { return categories }
+        let query = searchText.lowercased()
+        return categories.compactMap { cat in
+            if cat.name.lowercased().contains(query) { return cat }
+            let hits = cat.icons.filter {
+                $0.replacingOccurrences(of: ".", with: " ")
+                  .replacingOccurrences(of: "fill", with: "")
+                  .contains(query)
+            }
+            return hits.isEmpty ? nil : (name: cat.name, icons: hits)
+        }
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    ForEach(categories, id: \.name) { category in
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text(category.name)
-                                .font(.footnote.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                                .padding(.horizontal, 16)
+                if visibleCategories.isEmpty {
+                    ContentUnavailableView.search(text: searchText)
+                        .padding(.top, 60)
+                } else {
+                    VStack(alignment: .leading, spacing: 24) {
+                        ForEach(visibleCategories, id: \.name) { category in
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(category.name)
+                                    .font(.footnote.weight(.semibold))
+                                    .foregroundStyle(.secondary)
+                                    .padding(.horizontal, 16)
 
-                            LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
-                                ForEach(category.icons, id: \.self) { icon in
-                                    Button {
-                                        selectedIcon = icon
-                                        self.dismiss = false
-                                    } label: {
-                                        Image(systemName: icon)
-                                            .font(.system(size: 24))
-                                            .foregroundStyle(selectedIcon == icon ? Color.green : Color.primary)
-                                            .frame(width: 52, height: 52)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(selectedIcon == icon
-                                                        ? Color.green.opacity(0.15)
-                                                        : Color.secondary.opacity(0.08))
-                                            )
+                                LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))], spacing: 10) {
+                                    ForEach(category.icons, id: \.self) { icon in
+                                        Button {
+                                            selectedIcon = icon
+                                            self.dismiss = false
+                                        } label: {
+                                            Image(systemName: icon)
+                                                .font(.system(size: 24))
+                                                .foregroundStyle(selectedIcon == icon ? Color.green : Color.primary)
+                                                .frame(width: 52, height: 52)
+                                                .background(
+                                                    RoundedRectangle(cornerRadius: 10)
+                                                        .fill(selectedIcon == icon
+                                                            ? Color.green.opacity(0.15)
+                                                            : Color.secondary.opacity(0.08))
+                                                )
+                                        }
                                     }
                                 }
+                                .padding(.horizontal, 12)
                             }
-                            .padding(.horizontal, 12)
                         }
                     }
+                    .padding(.vertical, 16)
                 }
-                .padding(.vertical, 16)
             }
+            .searchable(text: $searchText, prompt: "Search icons")
             .navigationTitle("Choose Icon")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { self.dismiss = false }
+                    Button { self.dismiss = false } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
                 }
             }
         }
@@ -358,39 +383,55 @@ struct ColorPickerSheet: View {
     @Binding var selectedColor: String
     @Binding var dismiss: Bool
 
-    let colors = [
-        "FF3B30", "FF9500", "FFCC00", "34C759", "00C7BE",
-        "00B4D8", "0A84FF", "5856D6", "AF52DE", "FF2D55",
-        "A2845E", "8E7CC3", "007AFF", "5AC8FA", "50E3C2"
-    ]
-    let colorNames = [
-        "Red", "Orange", "Yellow", "Green", "Teal",
-        "Cyan", "Blue", "Purple", "Pink", "Rose",
-        "Brown", "Lavender", "Royal Blue", "Sky Blue", "Mint"
+    @State private var customColor: Color = .blue
+
+    private let presets = [
+        ("FF3B30", "Red"),    ("FF9500", "Orange"), ("FFCC00", "Yellow"),
+        ("34C759", "Green"),  ("00C7BE", "Teal"),   ("00B4D8", "Cyan"),
+        ("0A84FF", "Blue"),   ("5856D6", "Purple"), ("AF52DE", "Pink"),
+        ("FF2D55", "Rose"),   ("A2845E", "Brown"),  ("8E7CC3", "Lavender"),
+        ("007AFF", "Royal Blue"), ("5AC8FA", "Sky Blue"), ("50E3C2", "Mint")
     ]
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(Array(colors.enumerated()), id: \.offset) { idx, color in
-                    HStack {
-                        Circle().fill(Color(hex: color)).frame(width: 30, height: 30)
-                        Text(colorNames[idx])
-                        Spacer()
-                        if selectedColor == color {
-                            Image(systemName: "checkmark")
-                                .foregroundStyle(.green)
+                Section("Custom") {
+                    ColorPicker("Color wheel", selection: $customColor, supportsOpacity: false)
+                        .onChange(of: customColor) { _, newColor in
+                            selectedColor = newColor.toHex()
                         }
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        selectedColor = color
-                        dismiss = false
+                }
+
+                Section("Presets") {
+                    ForEach(presets, id: \.0) { hex, name in
+                        HStack {
+                            Circle().fill(Color(hex: hex)).frame(width: 30, height: 30)
+                            Text(name)
+                            Spacer()
+                            if selectedColor.uppercased() == hex {
+                                Image(systemName: "checkmark").foregroundStyle(.green)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedColor = hex
+                            dismiss = false
+                        }
                     }
                 }
             }
             .navigationTitle("Choose Color")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button { dismiss = false } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 14, weight: .semibold))
+                    }
+                }
+            }
+            .onAppear { customColor = Color(hex: selectedColor) }
         }
     }
 }

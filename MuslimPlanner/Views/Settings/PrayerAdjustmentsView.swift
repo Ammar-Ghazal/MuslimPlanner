@@ -5,6 +5,7 @@ import SwiftUI
 struct PrayerAdjustmentsView: View {
     @Bindable var settings: AppSettings
     let rawPrayerTimes: [PrayerTime]
+    let onDismissSettings: () -> Void
 
     private let prayerDefs: [(name: String, icon: String)] = [
         ("Fajr",    "moon.stars.fill"),
@@ -25,7 +26,7 @@ struct PrayerAdjustmentsView: View {
             ForEach(prayerDefs, id: \.name) { def in
                 let raw = rawPrayerTimes.first { $0.name == def.name }
                 NavigationLink {
-                    PrayerAdjustmentEditor(settings: settings, name: def.name, icon: def.icon, rawTime: raw?.time)
+                    PrayerAdjustmentEditor(settings: settings, name: def.name, icon: def.icon, rawTime: raw?.time, onDismissSettings: onDismissSettings)
                 } label: {
                     prayerRow(name: def.name, icon: def.icon, rawTime: raw?.time)
                 }
@@ -33,6 +34,14 @@ struct PrayerAdjustmentsView: View {
         }
         .navigationTitle("Prayer Adjustments")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button { onDismissSettings() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -84,6 +93,7 @@ struct PrayerAdjustmentEditor: View {
     let name: String
     let icon: String
     let rawTime: Date?
+    let onDismissSettings: () -> Void
 
     @State private var isFixed = false
     @State private var fixedDate = Date()
@@ -184,6 +194,14 @@ struct PrayerAdjustmentEditor: View {
         }
         .navigationTitle(name)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button { onDismissSettings() } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .semibold))
+                }
+            }
+        }
         .onAppear { load() }
     }
 
