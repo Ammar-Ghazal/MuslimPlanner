@@ -249,7 +249,7 @@ private struct NewSubtaskForm: View {
 
 // MARK: - Icon picker
 
-private struct IconPickerSheet: View {
+struct IconPickerSheet: View {
     @Binding var selectedIcon: String
     @Binding var dismiss: Bool
 
@@ -354,7 +354,7 @@ private struct IconPickerSheet: View {
 
 // MARK: - Color picker
 
-private struct ColorPickerSheet: View {
+struct ColorPickerSheet: View {
     @Binding var selectedColor: String
     @Binding var dismiss: Bool
 

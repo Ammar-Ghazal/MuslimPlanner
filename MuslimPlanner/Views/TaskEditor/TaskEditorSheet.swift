@@ -14,9 +14,14 @@ struct TaskEditorSheet: View {
     @State private var title = ""
     @State private var startTime = Date()
     @State private var durationMins = 30
-    @State private var isCompleted = false
     @State private var linkedTemplate: TaskTemplate? = nil
     @State private var showTypePicker = false
+
+    // Edit-mode appearance (written back to the task's type on save)
+    @State private var symbolName = "circle.fill"
+    @State private var colorHex = "007AFF"
+    @State private var showIconPicker = false
+    @State private var showColorPicker = false
 
     private var isEditing: Bool { task != nil }
 
@@ -49,41 +54,60 @@ struct TaskEditorSheet: View {
                         .foregroundStyle(.secondary)
                 }
 
-                // Task type — shows current type and lets the user change it
-                Section("Task Type") {
-                    if let t = linkedTemplate {
-                        Button { showTypePicker = true } label: {
-                            HStack(spacing: 10) {
-                                Image(systemName: t.symbolName)
-                                    .foregroundStyle(Color(hex: t.colorHex))
-                                    .frame(width: 24)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(t.displayTitle).foregroundStyle(.primary)
-                                    if t.parent != nil {
-                                        Text(t.path).font(.caption).foregroundStyle(.secondary)
-                                    }
+                if isEditing {
+                    if task?.taskType != nil {
+                        Section("Appearance") {
+                            Button { showIconPicker = true } label: {
+                                HStack {
+                                    Text("Icon").foregroundStyle(.primary)
+                                    Spacer()
+                                    Image(systemName: symbolName)
+                                        .foregroundStyle(Color(hex: colorHex))
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption2).foregroundStyle(.tertiary)
                                 }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .font(.caption2).foregroundStyle(.tertiary)
+                            }
+                            Button { showColorPicker = true } label: {
+                                HStack {
+                                    Text("Color").foregroundStyle(.primary)
+                                    Spacer()
+                                    Circle().fill(Color(hex: colorHex)).frame(width: 22, height: 22)
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption2).foregroundStyle(.tertiary)
+                                }
                             }
                         }
-                    } else {
-                        Button { showTypePicker = true } label: {
-                            Label("Set Task Type", systemImage: "tag")
-                                .foregroundStyle(.blue)
-                        }
-                    }
-                }
-
-                if isEditing {
-                    Section {
-                        Toggle("Completed", isOn: $isCompleted)
                     }
                     Section {
                         Button("Delete Task", role: .destructive) {
                             if let t = task { ctx.delete(t); try? ctx.save() }
                             dismiss()
+                        }
+                    }
+                } else {
+                    Section("Task Type") {
+                        if let t = linkedTemplate {
+                            Button { showTypePicker = true } label: {
+                                HStack(spacing: 10) {
+                                    Image(systemName: t.symbolName)
+                                        .foregroundStyle(Color(hex: t.colorHex))
+                                        .frame(width: 24)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(t.displayTitle).foregroundStyle(.primary)
+                                        if t.parent != nil {
+                                            Text(t.path).font(.caption).foregroundStyle(.secondary)
+                                        }
+                                    }
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption2).foregroundStyle(.tertiary)
+                                }
+                            }
+                        } else {
+                            Button { showTypePicker = true } label: {
+                                Label("Set Task Type", systemImage: "tag")
+                                    .foregroundStyle(.blue)
+                            }
                         }
                     }
                 }
@@ -100,8 +124,12 @@ struct TaskEditorSheet: View {
                 }
             }
             .onAppear { populate() }
-            // Type picker: a simple flat list of all templates (sheet-within-sheet is fine here
-            // since it's just a list — no further navigation required)
+            .sheet(isPresented: $showIconPicker) {
+                IconPickerSheet(selectedIcon: $symbolName, dismiss: $showIconPicker)
+            }
+            .sheet(isPresented: $showColorPicker) {
+                ColorPickerSheet(selectedColor: $colorHex, dismiss: $showColorPicker)
+            }
             .sheet(isPresented: $showTypePicker) {
                 TemplateTreePickerSheet(constrainedTo: linkedTemplate.map(\.root)) { chosen in
                     linkedTemplate = chosen
@@ -119,7 +147,8 @@ struct TaskEditorSheet: View {
             title = t.title
             startTime = t.startTime ?? defaultStartTime()
             durationMins = t.durationMinutes ?? 30
-            isCompleted = t.isCompleted
+            symbolName = t.taskType?.symbolName ?? "circle.fill"
+            colorHex = t.taskType?.colorHex ?? "007AFF"
             linkedTemplate = t.taskType
         } else if let p = prefill {
             title = p.displayTitle
@@ -167,20 +196,18 @@ struct TaskEditorSheet: View {
             second: 0, of: base
         ) ?? base
 
-        let block = prayerBlock(for: computedStart)
-
         if let t = task {
             t.title = cleanTitle
             t.startTime = computedStart
             t.durationMinutes = durationMins
-            t.prayerBlock = block
-            t.isCompleted = isCompleted
-            t.taskType = linkedTemplate
+            t.prayerBlock = prayerBlock(for: computedStart)
+            t.taskType?.symbolName = symbolName
+            t.taskType?.colorHex = colorHex
         } else {
             let newTask = PlanTask(
                 title: cleanTitle,
                 date: base,
-                prayerBlock: block,
+                prayerBlock: prayerBlock(for: computedStart),
                 startTime: computedStart,
                 durationMinutes: durationMins
             )
@@ -193,13 +220,9 @@ struct TaskEditorSheet: View {
     }
 }
 
-// MARK: - Template tree picker (for "Change Type" inside the editor)
-// Shows the full template tree with NavigationLink drill-down.
-// Lives here so it can call back into TaskEditorSheet without circular deps.
+// MARK: - Template tree picker (for "Change Type" inside the new-task editor)
 
 private struct TemplateTreePickerSheet: View {
-    /// When set, the picker is scoped to this root's subtree only.
-    /// When nil (task has no type yet), all root templates are shown.
     let constrainedTo: TaskTemplate?
     let onPick: (TaskTemplate) -> Void
 
@@ -212,9 +235,7 @@ private struct TemplateTreePickerSheet: View {
         NavigationStack {
             List {
                 if let root = constrainedTo {
-                    // Scoped view: only show this root's subtree
                     if root.subtasks.isEmpty {
-                        // Root has no subtasks — nothing to change to
                         ContentUnavailableView(
                             "No Subtypes",
                             systemImage: "square.stack",
@@ -240,7 +261,6 @@ private struct TemplateTreePickerSheet: View {
                         }
                     }
                 } else {
-                    // Unconstrained: show all roots (task has no type yet)
                     if rootTemplates.isEmpty {
                         ContentUnavailableView(
                             "No Task Types",
