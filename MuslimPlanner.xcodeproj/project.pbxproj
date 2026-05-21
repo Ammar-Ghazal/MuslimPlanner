@@ -3,24 +3,28 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		019BAF095A6BB24D1500C65D /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DB98D20DF57D77D04E9FC4B8 /* PrivacyInfo.xcprivacy */; };
 		07055C708F225C0F3B4373CC /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2CFF90C8950A503C7A5652 /* NotificationService.swift */; };
+		0EAED70B513428CA008A2650 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6E43765AF92A01B4E26F61A /* Assets.xcassets */; };
+		17A14F3CC55BD82C0814877C /* MuslimPlannerIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = CB4B4BE51EBC81DF9CC287A0 /* MuslimPlannerIcon.png */; };
 		18D25DD4AB88420FE3C86749 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC42FD5DCEA1C85F097478F5 /* ContentView.swift */; };
 		39640412088E46C6F8AC0327 /* TimelineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FED1C2FC2F1C141380E7E9D5 /* TimelineView.swift */; };
 		41D804868C5152897B0CC656 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D639B414425E39E624DADC0 /* AppSettings.swift */; };
 		4D239FD43DCAF60916AB8A90 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD3E4809910FF741EC4D57D4 /* Extensions.swift */; };
 		617C61381CAC49360E238120 /* PrayerTimeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E1C64B5FFA5F3DFC2E756D0 /* PrayerTimeService.swift */; };
 		6821EFEA13024534303ABEA0 /* SwiftData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */; };
+		72E6AB60C274C37BEEE464BD /* icon.json in Resources */ = {isa = PBXBuildFile; fileRef = D55B96309F3A64EA6675A326 /* icon.json */; };
 		7F018A5174FB90A32BD285B9 /* DayPlanViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094EDFC40186B1DA4379B5A8 /* DayPlanViewModel.swift */; };
 		82EF675C236AF1080C6EBA7E /* PlanTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067312DD0D64CFAC1EF551C4 /* PlanTask.swift */; };
 		880396B4A9CA57AB2FE7A86B /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */; };
 		954801C9BD5EA85EAC65B20E /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A82412766D38719C8E6F59 /* MainTabView.swift */; };
 		9DE9509DA201C52F9EF8587C /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F0C512871DD7A596F089F7 /* SettingsView.swift */; };
+		A0A61FBC00A974E4AF0289C3 /* PrayerAdjustmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D8AC401B77ABE554A8AE1F3 /* PrayerAdjustmentsView.swift */; };
 		A3B07BF4AE04E439D6C683C4 /* TaskTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265FF3F38006DD8F325A929C /* TaskTemplate.swift */; };
-		AB1C2D3E4F5A6B7C8D9E0F1A /* PrayerAdjustmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1E2F3A4B5C6D7E8F9A0B1C /* PrayerAdjustmentsView.swift */; };
 		B2DA62F5C28CCE5291B157FB /* TaskTemplateEditorSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */; };
 		C0C474E2384E1D24A7F5C8DE /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20664468F9BBD341BBE40F2E /* LocationService.swift */; };
 		C4EE921562296FA76AE3379E /* PrayerAnchorRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D3AF9382BE82978BE15F06 /* PrayerAnchorRow.swift */; };
@@ -38,6 +42,7 @@
 		20664468F9BBD341BBE40F2E /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		265FF3F38006DD8F325A929C /* TaskTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplate.swift; sourceTree = "<group>"; };
 		2D2CFF90C8950A503C7A5652 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		2D8AC401B77ABE554A8AE1F3 /* PrayerAdjustmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerAdjustmentsView.swift; sourceTree = "<group>"; };
 		32F0C512871DD7A596F089F7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		35A82412766D38719C8E6F59 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		3CF0203954274F94D249397F /* TaskEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditorSheet.swift; sourceTree = "<group>"; };
@@ -51,11 +56,14 @@
 		9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftData.framework; path = System/Library/Frameworks/SwiftData.framework; sourceTree = SDKROOT; };
 		A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplateEditorSheet.swift; sourceTree = "<group>"; };
 		BC42FD5DCEA1C85F097478F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		CD1E2F3A4B5C6D7E8F9A0B1C /* PrayerAdjustmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerAdjustmentsView.swift; sourceTree = "<group>"; };
+		CB4B4BE51EBC81DF9CC287A0 /* MuslimPlannerIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MuslimPlannerIcon.png; sourceTree = "<group>"; };
 		D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		D55B96309F3A64EA6675A326 /* icon.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = icon.json; sourceTree = "<group>"; };
+		DB98D20DF57D77D04E9FC4B8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		DD3E4809910FF741EC4D57D4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		E17B12A516D6C6A03AEC3749 /* MuslimPlanner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MuslimPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E17B12A516D6C6A03AEC3749 /* MuslimPlanner.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MuslimPlanner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6D3AF9382BE82978BE15F06 /* PrayerAnchorRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerAnchorRow.swift; sourceTree = "<group>"; };
+		F6E43765AF92A01B4E26F61A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FED1C2FC2F1C141380E7E9D5 /* TimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimelineView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -94,6 +102,14 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		23B1D7FE7CE79EEB9ADC5B01 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				CB4B4BE51EBC81DF9CC287A0 /* MuslimPlannerIcon.png */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
 		2C476BEA785E69ECACA76700 /* TaskEditor */ = {
 			isa = PBXGroup;
 			children = (
@@ -118,12 +134,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		418B9462F214F379B9893792 /* MuslimPlannerIcon1.icon */ = {
+			isa = PBXGroup;
+			children = (
+				D55B96309F3A64EA6675A326 /* icon.json */,
+				23B1D7FE7CE79EEB9ADC5B01 /* Assets */,
+			);
+			path = MuslimPlannerIcon1.icon;
+			sourceTree = "<group>";
+		};
 		65B6D1179026251474B6A99B /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				2D8AC401B77ABE554A8AE1F3 /* PrayerAdjustmentsView.swift */,
 				32F0C512871DD7A596F089F7 /* SettingsView.swift */,
 				6E94CEBE8E20B59E5FDE4E61 /* TaskTypeManagerView.swift */,
-				CD1E2F3A4B5C6D7E8F9A0B1C /* PrayerAdjustmentsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -191,6 +216,7 @@
 				35A82412766D38719C8E6F59 /* MainTabView.swift */,
 				8387FC484D145B0A35CCD688 /* MuslimPlannerApp.swift */,
 				687FDFE565800C4489E304D8 /* Models */,
+				FFBEACED9F08276E7F5EF1D4 /* Resources */,
 				9124B3D64A2B25F9C3DE503B /* Services */,
 				2E888ADD4D02B7CF987BC218 /* Utilities */,
 				66B47AFFAAD96481F4B5681B /* ViewModels */,
@@ -207,6 +233,16 @@
 			path = Onboarding;
 			sourceTree = "<group>";
 		};
+		FFBEACED9F08276E7F5EF1D4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F6E43765AF92A01B4E26F61A /* Assets.xcassets */,
+				DB98D20DF57D77D04E9FC4B8 /* PrivacyInfo.xcprivacy */,
+				418B9462F214F379B9893792 /* MuslimPlannerIcon1.icon */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -215,6 +251,7 @@
 			buildConfigurationList = 0EC042C91D16C8EF320B69A5 /* Build configuration list for PBXNativeTarget "MuslimPlanner" */;
 			buildPhases = (
 				D221034B751E607A416E7A26 /* Sources */,
+				5673A29B7574BC0AF5226C41 /* Resources */,
 				F33CEB757BB1AC77F70F58A1 /* Frameworks */,
 			);
 			buildRules = (
@@ -235,9 +272,10 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2650;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					1788DB3B82B2B758191A729E = {
+						DevelopmentTeam = 58FZ49BXRF;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -252,6 +290,7 @@
 			);
 			mainGroup = 99DD5735C69A83312930F144;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -259,6 +298,20 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5673A29B7574BC0AF5226C41 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0EAED70B513428CA008A2650 /* Assets.xcassets in Resources */,
+				17A14F3CC55BD82C0814877C /* MuslimPlannerIcon.png in Resources */,
+				019BAF095A6BB24D1500C65D /* PrivacyInfo.xcprivacy in Resources */,
+				72E6AB60C274C37BEEE464BD /* icon.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		D221034B751E607A416E7A26 /* Sources */ = {
@@ -275,6 +328,7 @@
 				07055C708F225C0F3B4373CC /* NotificationService.swift in Sources */,
 				F0B5BB8655CD786C37FE0BE9 /* OnboardingView.swift in Sources */,
 				82EF675C236AF1080C6EBA7E /* PlanTask.swift in Sources */,
+				A0A61FBC00A974E4AF0289C3 /* PrayerAdjustmentsView.swift in Sources */,
 				C4EE921562296FA76AE3379E /* PrayerAnchorRow.swift in Sources */,
 				617C61381CAC49360E238120 /* PrayerTimeService.swift in Sources */,
 				9DE9509DA201C52F9EF8587C /* SettingsView.swift in Sources */,
@@ -282,7 +336,6 @@
 				A3B07BF4AE04E439D6C683C4 /* TaskTemplate.swift in Sources */,
 				B2DA62F5C28CCE5291B157FB /* TaskTemplateEditorSheet.swift in Sources */,
 				EE145E8D6F2EA1703C1F6282 /* TaskTypeManagerView.swift in Sources */,
-				AB1C2D3E4F5A6B7C8D9E0F1A /* PrayerAdjustmentsView.swift in Sources */,
 				DB5F6C2F3A438425A82E254A /* TaskTypePickerSheet.swift in Sources */,
 				39640412088E46C6F8AC0327 /* TimelineView.swift in Sources */,
 			);
@@ -326,10 +379,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 58FZ49BXRF;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -342,7 +393,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -354,9 +404,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 58FZ49BXRF;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MuslimPlanner/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -408,10 +458,8 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 58FZ49BXRF;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -431,7 +479,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -443,9 +490,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 58FZ49BXRF;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = MuslimPlanner/Resources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
