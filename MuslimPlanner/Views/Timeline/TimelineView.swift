@@ -634,8 +634,8 @@ struct TimedTaskCard: View {
                     .fill(task.color)
                     .frame(width: 4)
 
-                if let type = task.taskType {
-                    Image(systemName: type.symbolName)
+                if task.taskType != nil {
+                    Image(systemName: task.icon)
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(task.color.opacity(0.85))
                         .frame(width: 26)
