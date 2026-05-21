@@ -20,7 +20,7 @@ struct TaskEditorSheet: View {
     @State private var iconName = "circle.fill"
 
     private enum ActiveSheet: Identifiable {
-        case colorPicker, typePicker, iconPicker
+        case colorPicker, typePicker
         var id: Self { self }
     }
     @State private var activeSheet: ActiveSheet?
@@ -68,15 +68,15 @@ struct TaskEditorSheet: View {
                                         .font(.caption2).foregroundStyle(.tertiary)
                                 }
                             }
-                            Button { activeSheet = .iconPicker } label: {
+                            NavigationLink {
+                                IconPickerSheet(selectedIcon: $iconName, colorHex: colorHex)
+                            } label: {
                                 HStack {
                                     Text("Icon").foregroundStyle(.primary)
                                     Spacer()
                                     Image(systemName: iconName)
                                         .font(.system(size: 16))
                                         .foregroundStyle(Color(hex: colorHex))
-                                    Image(systemName: "chevron.right")
-                                        .font(.caption2).foregroundStyle(.tertiary)
                                 }
                             }
                         }
@@ -135,8 +135,6 @@ struct TaskEditorSheet: View {
             switch sheet {
             case .colorPicker:
                 ColorPickerSheet(selectedColor: $colorHex)
-            case .iconPicker:
-                IconPickerSheet(selectedIcon: $iconName, colorHex: colorHex)
             case .typePicker:
                 TemplateTreePickerSheet(constrainedTo: linkedTemplate.map(\.root)) { chosen in
                     linkedTemplate = chosen
@@ -350,7 +348,6 @@ private struct IconPickerSheet: View {
     let colorHex: String
     @Environment(\.dismiss) private var dismiss
 
-    @State private var searchText = ""
 
     private let categories: [(name: String, icons: [String])] = [
         ("General", [
@@ -393,7 +390,7 @@ private struct IconPickerSheet: View {
             "house.fill", "house.circle.fill", "building.fill", "building.2.fill",
             "cart.fill", "cart.circle.fill", "bag.fill", "basket.fill",
             "trash", "trash.circle.fill", "sofa.fill", "bed.double.fill",
-            "refrigerator.fill", "microwave.fill", "flame.fill", "fork.knife"
+            "refrigerator.fill", "microwave.fill", "flame.fill"
         ]),
         ("People & Social", [
             "person.fill", "person.circle.fill", "person.2.fill", "person.2.circle.fill",
@@ -437,174 +434,57 @@ private struct IconPickerSheet: View {
         ])
     ]
 
-    private let keywordAliases: [String: [String]] = [
-        "gym": ["dumbbell.fill", "figure.strengthtraining.traditional", "figure.walk", "figure.run", "sportscourt.fill", "trophy.fill"],
-        "exercise": ["dumbbell.fill", "figure.walk", "figure.run", "bicycle.fill", "figure.yoga", "sportscourt.fill"],
-        "fitness": ["dumbbell.fill", "figure.strengthtraining.traditional", "figure.walk", "figure.run", "bicycle.fill", "heart.fill"],
-        "sport": ["sportscourt.fill", "trophy.fill", "medal.fill", "bicycle.fill", "figure.run"],
-        "work": ["briefcase.fill", "doc.fill", "folder.fill", "wrench.fill", "gearshape.fill"],
-        "study": ["book.fill", "pencil", "graduationcap.fill", "lightbulb.fill", "brain"],
-        "food": ["fork.knife", "cup.and.saucer.fill", "carrot.fill", "apple.logo", "refrigerator.fill"],
-        "eat": ["fork.knife", "cup.and.saucer.fill", "carrot.fill"],
-        "cook": ["flame.fill", "fork.knife", "microwave.fill", "pot.2"],
-        "sleep": ["bed.double.fill", "moon.fill"],
-        "rest": ["bed.double.fill", "moon.fill", "figure.mind.and.body"],
-        "prayer": ["hands.sparkles.fill", "hand.raised.fill", "cross.case.fill", "rosette"],
-        "meeting": ["person.2.fill", "phone.fill", "video.fill", "message.fill"],
-        "talk": ["message.fill", "bubble.left.fill", "phone.fill", "video.fill"],
-        "chat": ["message.fill", "bubble.left.fill", "bubble.right.fill"],
-        "music": ["music.note", "music.note.list", "headphones"],
-        "movie": ["film.fill", "tv.fill", "popcorn.fill"],
-        "game": ["gamecontroller.fill"],
-        "travel": ["airplane", "map.fill", "location.fill", "car.fill", "bus.fill"],
-        "trip": ["airplane", "map.fill", "car.fill"],
-        "money": ["dollarsign.circle.fill", "banknote.fill", "creditcard.fill", "wallet.bifold.fill"],
-        "shopping": ["bag.fill", "basket.fill", "cart.fill", "tag.circle.fill"],
-        "buy": ["bag.fill", "basket.fill", "cart.fill"],
-        "sell": ["tag.circle.fill", "dollarsign.circle.fill"],
-        "task": ["checklist", "list.bullet", "checkmark.circle.fill"],
-        "todo": ["checklist", "list.bullet"],
-        "done": ["checkmark.circle.fill"],
-        "medical": ["stethoscope", "pills.fill", "heart.fill", "cross.case.fill"],
-        "health": ["heart.fill", "stethoscope", "pills.fill", "apple.logo"],
-        "clean": ["trash", "sparkles", "drop.circle.fill"],
-        "important": ["flag.fill", "star.fill", "exclamationmark.circle.fill"],
-        "urgent": ["exclamationmark.circle.fill", "flag.fill"],
-        "question": ["questionmark.circle.fill"],
-        "idea": ["lightbulb.fill", "sparkles"],
-        "love": ["heart.fill"],
-        "favorite": ["star.fill", "heart.fill"],
-        "tech": ["laptopcomputer", "iphone", "gearshape.fill"],
-        "computer": ["laptopcomputer", "desktopcomputer"],
-        "phone": ["iphone", "phone.fill"],
-        "internet": ["globe", "wifi", "antenna.radiowaves.left.and.right"],
-        "coding": ["wrench.fill", "gearshape.fill", "book.fill"],
-        "art": ["paintbrush.fill", "photo.fill"],
-        "create": ["paintbrush.fill", "pencil", "lightbulb.fill"],
-        "weather": ["cloud.fill", "sun.max.fill", "moon.fill", "wind"],
-        "rain": ["cloud.rain.fill"],
-        "snow": ["cloud.snow.fill", "snowflake"],
-        "nature": ["tree.fill", "mountain.2.fill", "leaf.fill", "drop.circle.fill"],
-        "plant": ["tree.fill", "leaf.fill", "carrot.fill"],
-        "birthday": ["gift.fill", "party.popper"],
-        "celebration": ["gift.fill", "sparkles", "party.popper"]
-    ]
-
-    private var visibleCategories: [(name: String, icons: [String])] {
-        guard !searchText.isEmpty else { return categories }
-        let query = searchText.lowercased().trimmingCharacters(in: .whitespaces)
-
-        if let aliasedIcons = keywordAliases[query], !aliasedIcons.isEmpty {
-            return [("Results", aliasedIcons)]
-        }
-
-        return categories.compactMap { cat in
-            if cat.name.lowercased().contains(query) { return cat }
-            let hits = cat.icons.filter {
-                $0.replacingOccurrences(of: ".", with: " ")
-                  .replacingOccurrences(of: "fill", with: "")
-                  .lowercased()
-                  .contains(query)
-            }
-            return hits.isEmpty ? nil : (name: cat.name, icons: hits)
-        }
-    }
+    private var visibleCategories: [(name: String, icons: [String])] { categories }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                SearchBar(text: $searchText)
-
-                if visibleCategories.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 32))
-                            .foregroundStyle(.secondary)
-                        Text("No icons found")
-                            .font(.headline)
-                        Text("Try searching with keywords like 'gym', 'exercise', 'travel', 'cooking'")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-                    }
+        VStack(spacing: 0) {
+            if visibleCategories.isEmpty {
+                ContentUnavailableView("No icons", systemImage: "magnifyingglass")
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color(uiColor: .systemBackground))
-                } else {
-                    ScrollView {
-                        LazyVStack(alignment: .leading, spacing: 20) {
-                            ForEach(visibleCategories, id: \.name) { category in
-                                VStack(alignment: .leading, spacing: 12) {
-                                    Text(category.name)
-                                        .font(.headline)
-                                        .foregroundStyle(.primary)
-                                        .padding(.horizontal, 16)
+            } else {
+                ScrollView(.vertical) {
+                    LazyVStack(alignment: .leading, spacing: 20) {
+                        ForEach(visibleCategories, id: \.name) { category in
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text(category.name)
+                                    .font(.headline)
+                                    .foregroundStyle(.primary)
+                                    .padding(.horizontal, 16)
 
-                                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 5), spacing: 12) {
-                                        ForEach(category.icons, id: \.self) { icon in
-                                            Button(action: {
-                                                selectedIcon = icon
-                                                dismiss()
-                                            }) {
-                                                ZStack {
-                                                    if selectedIcon == icon {
-                                                        Circle()
-                                                            .fill(Color(hex: colorHex).opacity(0.2))
-                                                    }
-
-                                                    Image(systemName: icon)
-                                                        .font(.system(size: 18))
-                                                        .foregroundStyle(selectedIcon == icon ? Color(hex: colorHex) : .primary)
+                                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 5), spacing: 12) {
+                                    ForEach(category.icons, id: \.self) { icon in
+                                        Button(action: {
+                                            selectedIcon = icon
+                                            dismiss()
+                                        }) {
+                                            ZStack {
+                                                if selectedIcon == icon {
+                                                    Circle()
+                                                        .fill(Color(hex: colorHex).opacity(0.2))
                                                 }
-                                                .frame(height: 50)
-                                                .contentShape(Circle())
+
+                                                Image(systemName: icon)
+                                                    .font(.system(size: 18))
+                                                    .foregroundStyle(selectedIcon == icon ? Color(hex: colorHex) : .primary)
                                             }
+                                            .frame(height: 50)
+                                            .contentShape(Circle())
                                         }
                                     }
-                                    .padding(.horizontal, 16)
                                 }
+                                .padding(.horizontal, 16)
                             }
                         }
-                        .padding(.vertical, 16)
                     }
-                    .frame(maxHeight: .infinity)
-                    .scrollDismissesKeyboard(.immediately)
+                    .padding(.vertical, 16)
                 }
-            }
-            .frame(maxHeight: .infinity, alignment: .top)
-            .navigationTitle("Choose Icon")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button { dismiss() } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 14, weight: .semibold))
-                    }
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .layoutPriority(1)
+                .scrollDismissesKeyboard(.immediately)
             }
         }
-    }
-}
-
-private struct SearchBar: View {
-    @Binding var text: String
-
-    var body: some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass")
-                .foregroundStyle(.secondary)
-
-            TextField("Search icons or keywords", text: $text)
-                .textFieldStyle(.roundedBorder)
-
-            if !text.isEmpty {
-                Button(action: { text = "" }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-        .padding(12)
-        .background(Color(uiColor: .secondarySystemBackground))
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .navigationTitle("Choose Icon")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
