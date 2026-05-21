@@ -18,6 +18,7 @@ struct TaskEditorSheet: View {
 
     @State private var colorHex = "007AFF"
     @State private var iconName = "circle.fill"
+    @State private var hasPopulated = false
 
     private enum ActiveSheet: Identifiable {
         case colorPicker, typePicker
@@ -129,7 +130,11 @@ struct TaskEditorSheet: View {
                         .disabled(title.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
-            .onAppear { populate() }
+            .onAppear {
+                guard !hasPopulated else { return }
+                hasPopulated = true
+                populate()
+            }
         }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
