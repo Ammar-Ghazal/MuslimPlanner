@@ -16,6 +16,8 @@
     <string>$(CURRENT_PROJECT_VERSION)</string>
     <key>CFBundleDisplayName</key>
     <string>Muslim Planner</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.productivity</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Muslim Planner needs your location to calculate accurate prayer times for your city.</string>
     <key>UILaunchScreen</key>

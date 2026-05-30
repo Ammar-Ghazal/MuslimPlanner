@@ -56,6 +56,7 @@
 		9E1FE0DF6B8FD592DC84C980 /* SwiftData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftData.framework; path = System/Library/Frameworks/SwiftData.framework; sourceTree = SDKROOT; };
 		A1DF4048B53C1FAAE827A0FF /* TaskTemplateEditorSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTemplateEditorSheet.swift; sourceTree = "<group>"; };
 		BC42FD5DCEA1C85F097478F5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C4A98698245B770084863F2F /* MuslimPlanner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MuslimPlanner.entitlements; sourceTree = "<group>"; };
 		CB4B4BE51EBC81DF9CC287A0 /* MuslimPlannerIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = MuslimPlannerIcon.png; sourceTree = "<group>"; };
 		D4AA3C6ED16F81AB50EEB26F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		D55B96309F3A64EA6675A326 /* icon.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = icon.json; sourceTree = "<group>"; };
@@ -214,6 +215,7 @@
 			children = (
 				BC42FD5DCEA1C85F097478F5 /* ContentView.swift */,
 				35A82412766D38719C8E6F59 /* MainTabView.swift */,
+				C4A98698245B770084863F2F /* MuslimPlanner.entitlements */,
 				8387FC484D145B0A35CCD688 /* MuslimPlannerApp.swift */,
 				687FDFE565800C4489E304D8 /* Models */,
 				FFBEACED9F08276E7F5EF1D4 /* Resources */,
@@ -403,6 +405,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MuslimPlanner/MuslimPlanner.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -489,6 +492,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = MuslimPlanner/MuslimPlanner.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
